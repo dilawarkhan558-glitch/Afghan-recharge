@@ -7,37 +7,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Unzip project
         run: |
           sudo apt-get install -y unzip
-          unzip -o "project (3).zip" || unzip -o *.zip
+          unzip -o *.zip
           rm -f *.zip
+          for d in */; do if [ -f "$d/package.json" ]; then cp -r "$d"/* .; cp -r "$d"/.* . 2>/dev/null || true; rm -rf "$d"; break; fi; done
           ls -la
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
       - name: Build Web
         run: |
           npm install
           npm run build
-
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-
       - name: Build APK
         run: |
           npx cap sync android
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
-
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
