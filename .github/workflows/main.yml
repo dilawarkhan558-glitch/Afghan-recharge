@@ -1,4 +1,4 @@
-name: Build APK
+name: Build APK from ZIP
 on:
   push:
     branches: [ main ]
@@ -7,30 +7,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node 22
+
+      - name: Unzip project
+        run: |
+          sudo apt-get install -y unzip
+          unzip -o "project (3).zip" || unzip -o *.zip
+          rm -f *.zip
+          ls -la
+
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-      - name: Setup Java 21
+          node-version: 20
+
+      - name: Build Web
+        run: |
+          npm install
+          npm run build
+
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
-      - name: Install dependencies
-        run: npm install
-      - name: Build web app
-        run: npm run build
-      - name: Add Android platform
-        run: npx cap add android || true
-      - name: Sync Capacitor
-        run: npx cap sync android
+          java-version: '17'
+
+      - name: Setup Android
+        uses: android-actions/setup-android@v3
+
       - name: Build APK
         run: |
+          npx cap sync android
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
+          name: APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
