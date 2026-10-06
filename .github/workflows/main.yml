@@ -11,7 +11,6 @@ jobs:
           rm -rf www android ios node_modules *.zip
           mkdir -p www
           cp Index.html www/index.html
-          echo '{"appId":"com.afghan.recharge","appName":"AfghanRecharge","webDir":"www","server":{"androidScheme":"https"}}}' > capacitor.config.json
       - uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -22,6 +21,8 @@ jobs:
       - run: |
           npm init -y
           npm install @capacitor/core@5.7.0 @capacitor/cli@5.7.0 @capacitor/android@5.7.0 --save
+          npx cap init AfghanRecharge com.afghan.recharge --web-dir=www
+          echo '{"appId":"com.afghan.recharge","appName":"AfghanRecharge","webDir":"www","server":{"androidScheme":"https"}}' > capacitor.config.json
       - run: |
           npx cap add android
           npx cap copy android
