@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AFGHAN TOPUP</title>
+<style>
+body{margin:0;background:#121212;color:#fff;font-family:sans-serif;max-width:430px;margin:auto}
+.flag{height:90px;display:flex;flex-direction:column}
+.flag div{flex:1}.b{background:#000}.r{background:#D32011}.g{background:#007A36}
+.t{font-size:30px;font-weight:900;text-align:center;padding:18px 0 4px}
+.s{color:#9CA3AF;text-align:center;font-size:13px}
+.sec{padding:20px 16px 8px;color:#9CA3AF;font-size:11px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px}
+.btn{border-radius:14px;padding:18px;text-align:center;font-weight:800;border:none}
+.ro{background:#FF1A1A;color:#fff}.aw{background:#1976FF;color:#fff}
+.et{background:#2EB872;color:#fff}.mt{background:#FFC93C;color:#000}
+.sa{background:#0A5C36;color:#fff;grid-column:span 2}
+.pro{background:linear-gradient(90deg,#0A5C36,#1DB954);margin:16px;border-radius:14px;padding:18px;text-align:center;font-weight:800}
+</style></head><body>
+<div class="flag"><div class="b"></div><div class="r"></div><div class="g"></div></div>
+<div class="t">AFGHAN TOPUP</div><div class="s">Secure Mobile Recharge</div>
+<div class="sec">NETWORK PROVIDER</div>
+<div class="grid">
+<button class="btn ro">ROSHAN</button><button class="btn aw">AWCC</button>
+<button class="btn et">ETISALAT</button><button class="btn mt">MTN</button>
+<button class="btn sa">SALAAM</button>
+</div>
+<div class="pro">Continue to Recharge ></div>
+</body></html>
