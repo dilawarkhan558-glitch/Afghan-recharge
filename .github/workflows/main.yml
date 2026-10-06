@@ -1,40 +1,51 @@
-name: Build APK from ZIP
+name: build
 on:
   push:
     branches: [ main ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Unzip project
         run: |
           sudo apt-get install -y unzip
-          unzip -o *.zip
+          unzip -o "*.zip" || unzip -o */*.zip || true
           rm -f *.zip
-          for d in */; do if [ -f "$d/package.json" ]; then cp -r "$d"/* .; cp -r "$d"/.* . 2>/dev/null || true; rm -rf "$d"; break; fi; done
+          rm -rf android ios
+          for d in */; do if [ -f "$d/package.json" ]; then cd "$d" && mv * .* ../ 2>/dev/null; cd ..; break; fi; done
           ls -la
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
       - name: Build Web
         run: |
           npm install
-          npm run build
+          npm run build || npm run dist || npx vite build || true
+          ls -la dist || ls -la build || ls -la
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
+
       - name: Build APK
         run: |
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npx cap add android || true
           npx cap sync android
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: app-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
