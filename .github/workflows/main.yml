@@ -7,28 +7,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fix - Use Flag File
+      - name: Fix Files
         run: |
-          rm -f *.zip || true
-          rm -f Index.htmll || true
-          rm -rf android ios
+          rm -f *.zip
+          rm -f Index.htmll
+          rm -rf android ios node_modules
           mkdir -p www
           cp Index.html www/index.html
-          cp Index.html index.html || true
-          ls -la www/
-      - name: Setup Node
-        uses: actions/setup-node@v4
+          ls www/
+      - uses: actions/setup-node@v4
         with:
-          node-version: 22
-      - name: Setup Java
-        uses: actions/setup-java@v4
+          node-version: 20
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
       - name: Build APK
         run: |
-          npm install || true
-          npx cap add android || true
+          npm init -y
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npx cap init AfghanRecharge com.afghan.recharge --web-dir=www
+          npx cap add android
           npx cap sync android
           cd android
           chmod +x gradlew
