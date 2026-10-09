@@ -1,24 +1,28 @@
-<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Afghan Recharge PRO</title>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial;background:#f6f7f9;padding-bottom:75px}
-.flag{height:6px;display:flex}.flag div{flex:1}.b{flex:1;background:#000}.r{background:#D32011}.g{background:#007A36}
-.header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#fff;border-bottom:1px solid #eee}
-.header b{font-size:18px}.lang{border:1px solid #e5e5e5;border-radius:10px;padding:6px 12px;display:flex;align-items:center;gap:6px;font-size:14px}
-.ssl{background:linear-gradient(90deg,#e8f5e9,#fff1f0);text-align:center;padding:10px;font-size:13px;color:#333;font-weight:600;border-bottom:1px solid #eee}
-.title{padding:18px 16px 8px}.title h2{font-size:20px}.title p{color:#777;font-size:13px;margin-top:4px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 14px}
-.card{background:#fff;border:1px solid #e9e9e9;border-radius:16px;padding:14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05);cursor:pointer}
-.card.active{border-color:#D32011;box-shadow:0 0 0 2px rgba(211,32,17,.15)}
-.logo{border-radius:12px;padding:12px;margin-bottom:10px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:6px;font-size:15px}
-.ro{background:#fde8e7;color:#c62828}.et{background:#f1f5e3;color:#6a7d2e}.aw{background:#e3eefc;color:#2a5db0}.sa{background:#e6f2ec;color:#1a7a4a}.mt{background:#fff4c2;color:#b89700}
-.card b{font-size:14px;display:block}.card small{color:#777;font-size:11px;line-height:1.3;display:block;margin-top:4px}
-.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e5e5;display:flex;justify-content:space-around;padding:8px 0}
-.bottom div{text-align:center;color:#999;font-size:11px;cursor:pointer}.bottom div.active{color:#D32011}.bottom i{font-size:24px;display:block}
-#settingsPage{display:none;padding:16px}.set{background:#fff;border:1px solid #eee;border-radius:14px;padding:14px;margin:10px 0}
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Afghan Recharge</title><style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#f5f7f9;font-family:sans-serif;padding-bottom:80px}
+.top{height:6px;display:flex;background:#000}.top.r{flex:1;background:#D32011}.top.g{flex:1;background:#007A36}.top.b{flex:1;background:#000}
+.head{background:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee}
+.head b{font-size:18px}.ssl{background:#e8f5e9;text-align:center;padding:10px;font-size:12px;font-weight:700;color:#2e7d32}
+.box{padding:16px 14px}.box h2{font-size:19px}.box p{color:#888;font-size:13px;margin-top:3px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.c{background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:12px;text-align:center}
+.l{border-radius:10px;padding:12px;font-weight:900;margin-bottom:8px}.l1{background:#fce8e6;color:#b71c1c}.l2{background:#eef4d8;color:#556b2f}.l3{background:#e3efff;color:#0d47a1}.l4{background:#e6f4ea;color:#0b6e4f}.l5{background:#fff8c4;color:#7a6a00}
+.c b{font-size:13px}.c span{font-size:11px;color:#777;display:block;margin-top:3px;line-height:1.2}
+.bot{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;display:flex;justify-content:space-around;padding:8px 0}
+.bot div{font-size:11px;text-align:center;color:#999}.bot div.on{color:#D32011}.bot div i{font-size:22px;display:block}
 </style></head><body>
-<div class="flag"><div class="b"></div><div class="r"></div><div class="g"></div></div>
-
-<div class="header"><b>🇦🇫 Afghan Recharge</b><div class="lang"><i class
+<div class="top"><div class="b"></div><div class="r"></div><div class="g"></div></div>
+<div class="head"><b>🇦🇫 Afghan Recharge</b><div style="border:1px solid #ddd;border-radius:20px;padding:5px 10px">🌐 EN</div></div>
+<div class="ssl">🛡️ 256-Bit SSL Encrypted • Instant Top-Up Delivery</div>
+<div class="box">
+<h2>Select Your Network</h2><p>Choose your telecom operator to get started</p>
+<div class="grid">
+<div class="c"><div class="l l1">R Roshan</div><b>Roshan</b><span>Roshan (Telecom Development Company Afghanistan)</span></div>
+<div class="c"><div class="l l2">AN etisalat</div><b>Etisalat</b><span>Etisalat Afghanistan</span></div>
+<div class="c"><div class="l l3">AWCC</div><b>AWCC</b><span>Afghan Wireless Communication Company</span></div>
+<div class="c"><div class="l l4">S Salaam</div><b>Salaam Telecom</b><span>Salaam Telecom (ATR Board)</span></div>
+<div class="c"><div class="l l5">MTN Afghanistan</div><b>MTN Afghanistan</b><span>MTN Afghanistan (Atoma)</span></div>
+</div></div>
+<div class="bot"><div class="on"><i>🏠</i>Home</div><div><i>🕒</i>History</div><div><i>🔔</i>Alerts</div><div><i>⚙️</i>Settings</div></div>
+</body></html>
