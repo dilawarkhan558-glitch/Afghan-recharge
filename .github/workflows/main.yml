@@ -1,24 +1,26 @@
-name: Build Afghan APK
+name: Build REAL APK
 on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Prepare files
-        run: |
-          mkdir -p www
-          if [ -f "Index.html" ]; then
-            cp Index.html www/index.html
-            echo "Found Index.html"
-          else
-            echo "<h1>Please create Index.html</h1>" > www/index.html
-            echo "Created dummy - Index.html missing"
-          fi
-          ls -lh www/
-      - name: Upload
-        uses: actions/upload-artifact@v4
+      - uses: actions/setup-java@v4
         with:
-          name: Afghan-Topup-APK
-          path: www/
-          if-no-files-found: warn
+          distribution: temurin
+          java-version: 17
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: |
+          npm i -g @capacitor/cli
+          npm init -y
+          npm i @capacitor/core @capacitor/android
+          mkdir www && cp Index.html www/index.html
+          npx cap init "Afghan Recharge" com.afghantopup.app --web-dir=www
+          npx cap add android
+          cd android && chmod +x gradlew &&./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Afghan-Recharge-REAL-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
