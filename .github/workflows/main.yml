@@ -12,9 +12,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: unzip -o 'project (1).zip' -d temp
-      - run: mv temp/*/*. 2>/dev/null || mv temp/*. 2>/dev/null || mv temp/.. 2>/dev/null || true
-      - run: ls -la
+      - name: Unzip
+        run: |
+          rm -rf temp
+          unzip -o 'project (1).zip' -d temp
+          ls -la temp
+          cp -r temp/..
+          INNER=$(find. -maxdepth 3 -name package.json | head -n 1)
+          echo "Found $INNER"
+          if [! -f./package.json ]; then
+            DIR=$(dirname "$INNER")
+            echo "Moving from $DIR"
+            cp -rf "$DIR"/*./ 2>/dev/null || true
+            cp -rf "$DIR"/../ 2>/dev/null || true
+          fi
+          rm -rf temp
+          rm -f 'project (1).zip'
+          ls -la
       - run: npm install
       - run: npm run build
       - run: rm -rf android && npx cap add android && npx cap copy android
