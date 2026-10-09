@@ -1,53 +1,49 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Afghan Recharge</title>
+<title>AFGHAN TOPUP</title>
 <style>
-*{box-sizing:border-box;font-family:system-ui,sans-serif}
-body{margin:0;background:#f6f7f9;color:#111;padding-bottom:80px}
-.flag{height:6px;display:flex} .flag div{flex:1} .b{background:#000}.r{background:#D32011}.g{background:#007A36}
-.header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:#fff;border-bottom:1px solid #eee;position:sticky;top:0;z-index:10}
-.ssl{background:#e8f5e9;color:#2e7d32;padding:8px;text-align:center;font-size:12px;font-weight:600}
-h2{padding:20px 16px 0;margin:0;font-size:22px} p.sub{padding:4px 16px 10px;color:#666;font-size:14px;margin:0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
-.card{background:#fff;border-radius:16px;padding:16px;text-align:center;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,0.04);cursor:pointer}
-.card b{display:block;margin-top:8px} .card span{font-size:12px;color:#666}
-.card .icon{border-radius:12px;padding:12px;font-weight:900;font-size:20px}
-.r{background:#fde8e8;color:#c62828}.e{background:#eef6d8;color:#5a7d00}.a{background:#e3eefc;color:#1e4b8c}.s{background:#dff0e6;color:#0a5c36}.m{background:#fff3a3;color:#8a6d00}
+*{box-sizing:border-box;font-family:system-ui}body{margin:0;background:#0A0A0A;color:#fff;padding-bottom:85px}
+.flag{height:8px;display:flex;position:sticky;top:0;z-index:99}.flag div{flex:1}.b{background:#000}.r{background:#D32011}.g{background:#007A36}
+.top{display:flex;justify-content:space-between;align-items:center;padding:16px}.logo{font-size:24px;font-weight:900}
+.lang-btn{background:#1E1E1E;border:1px solid #333;border-radius:20px;padding:7px 14px;font-size:13px;cursor:pointer}
+.live{display:flex;justify-content:space-between;background:#121212;padding:8px 16px;font-size:12px;color:#4ade80;border:1px solid #1a1a1a}
 .page{display:none}.page.active{display:block}
-.phone-box{display:flex;align-items:center;background:#fff;border:1px solid #ddd;border-radius:12px;overflow:hidden;margin:16px}
-.prefix{background:#f5f5f5;padding:14px;font-weight:bold;border-right:1px solid #ddd}
-.phone-box input{flex:1;border:none;padding:14px;font-size:16px;outline:none}
-.amt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px}
-.amt{background:#fff;border:1px solid #ddd;border-radius:10px;padding:14px;text-align:center;font-weight:600;cursor:pointer}
-.amt.sel{border-color:#007A36;background:#e8f5e9}
-.btn-green{margin:16px;background:#0A5C36;color:#fff;padding:16px;text-align:center;border-radius:12px;font-weight:900;cursor:pointer}
-.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;padding:8px 0}
-.bottom div{text-align:center;font-size:11px;color:#888;cursor:pointer;padding:6px 16px}
-.bottom div.active{color:#D32011}
-.list{background:#fff;margin:10px 16px;border-radius:12px;padding:14px;border:1px solid #eee}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px}
+.op{padding:18px;border-radius:16px;text-align:center;font-weight:900;cursor:pointer;border:2px solid transparent}.op.sel{border-color:#fff;transform:scale(.97)}
+.ro{background:#E53935}.aw{background:#3B82F6}.et{background:#6fbf8a}.mt{background:#FCD86F;color:#000}.sa{background:#2E6B4A;grid-column:span 2}
+.amtgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 14px}
+.amt{background:#1E1E1E;border:1px solid #333;border-radius:14px;padding:16px;text-align:center;font-weight:800;cursor:pointer}.amt.sel{border-color:#fff;background:#2A2A2A}.amt small{display:block;color:#6fbf8a;font-size:11px;margin-top:4px}
+.phone{display:flex;background:#1E1E1E;border:1px solid #333;border-radius:14px;margin:14px;overflow:hidden}.pref{padding:14px;background:#2A2A2A;font-weight:800;border-right:1px solid #333}.phone input{flex:1;background:transparent;border:none;padding:14px;color:#fff;outline:none;font-size:15px}
+.btn{margin:14px;background:#fff;color:#000;padding:16px;border-radius:16px;text-align:center;font-weight:900;font-size:17px;cursor:pointer}
+.card{background:#151515;border:1px solid #222;border-radius:14px;padding:14px;margin:10px 14px}
+.support{background:#111;border:1px solid #333;border-radius:14px;padding:14px;margin:14px;display:flex;justify-content:space-between;align-items:center}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;border-top:1px solid #222;display:flex;justify-content:space-around;padding:8px 0}
+.bottom div{text-align:center;font-size:10px;color:#777;cursor:pointer;padding:5px 12px}.bottom div.active{color:#fff}
 </style></head><body>
 <div class="flag"><div class="b"></div><div class="r"></div><div class="g"></div></div>
-<div class="header"><b>🇦🇫 Afghan Recharge</b><div style="border:1px solid #ddd;border-radius:20px;padding:6px 12px">🌐 EN</div></div>
-<div class="ssl">🛡️ 256-Bit SSL Encrypted • Instant Top-Up Delivery</div>
+<div class="top"><div class="logo" id="logo">AFGHAN TOPUP 🇦🇫</div><div class="lang-btn" onclick="toggleLang()">🌐 <span id="ltxt">EN</span></div></div>
+<div class="live"><span id="live1">● LIVE RATE - EURO</span><span id="live2">1 EUR = 88.20 AFN</span></div>
+
+<!-- HOME -->
 <div id="home" class="page active">
-<h2>Select Your Network</h2><p class="sub">Choose your telecom operator to get started</p>
-<div class="grid">
-<div class="card" onclick="goRecharge('Roshan')"><div class="icon r">R Roshan</div><b>Roshan</b><span>Roshan (Telecom Development Company Afghanistan)</span></div>
-<div class="card" onclick="goRecharge('Etisalat')"><div class="icon e">AN etisalat</div><b>Etisalat</b><span>Etisalat Afghanistan</span></div>
-<div class="card" onclick="goRecharge('AWCC')"><div class="icon a">📶 AWCC</div><b>AWCC</b><span>Afghan Wireless Communication Company</span></div>
-<div class="card" onclick="goRecharge('Salaam')"><div class="icon s">S Salaam</div><b>Salaam Telecom</b><span>Salaam Telecom (ATRA)</span></div>
-<div class="card" onclick="goRecharge('MTN')"><div class="icon m">MTN</div><b>MTN Afghanistan</b><span>MTN Afghanistan (Atoma)</span></div>
-</div></div>
-<div id="recharge" class="page"><h2 id="opName">Recharge</h2><div class="phone-box"><div class="prefix">🇦🇫 +93</div><input id="phone" type="tel" placeholder="771 921 149"></div><div class="amt-grid"><div class="amt" onclick="selAmt(this,'50 AFN')">50 AFN</div><div class="amt" onclick="selAmt(this,'100 AFN')">100 AFN</div><div class="amt" onclick="selAmt(this,'200 AFN')">200 AFN</div><div class="amt" onclick="selAmt(this,'500 AFN')">500 AFN</div></div><div class="btn-green" onclick="doRecharge()">RECHARGE NOW</div><div class="btn-green" style="background:#eee;color:#333" onclick="showPage('home')">Back to Home</div></div>
-<div id="history" class="page"><h2>History</h2><div class="list">No recharges yet</div></div>
-<div id="alerts" class="page"><h2>Alerts</h2><div class="list">🔔 All systems operational</div></div>
-<div id="settings" class="page"><h2>Settings</h2><div class="list" onclick="window.open('tel:+93771921149')">📞 Support Number: +93 771 921 149</div><div class="list" onclick="showPage('home')">🏠 Home</div><div class="list">ℹ️ About - Afghan Topup v2.0</div><div class="list">📧 support@afghantopup.com</div></div>
-<div class="bottom"><div class="active" id="b-home" onclick="showPage('home')">🏠<br>Home</div><div id="b-history" onclick="showPage('history')">🕒<br>History</div><div id="b-alerts" onclick="showPage('alerts')">🔔<br>Alerts</div><div id="b-settings" onclick="showPage('settings')">⚙️<br>Settings</div></div>
-<script>
-let selOp='', selAmount='';
-function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(p).classList.add('active');document.querySelectorAll('.bottom div').forEach(x=>x.classList.remove('active'));document.getElementById('b-'+p).classList.add('active');}
-function goRecharge(op){selOp=op;document.getElementById('opName').innerText=op+' Recharge';showPage('recharge');}
-function selAmt(el,val){document.querySelectorAll('.amt').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');selAmount=val;}
-function doRecharge(){let num=document.getElementById('phone').value.trim();if(!num){alert('Number likho');return}if(!selAmount){alert('Amount select karo');return}if(num.startsWith('0')) num=num.substring(1);let full='+93'+num;alert(selOp+' '+selAmount+' to '+full+' Success!');}
-</script>
-</body></html>
+<div class="grid2">
+<div class="op ro" onclick="setOp(this,'Roshan')">ROSHAN</div>
+<div class="op aw" onclick="setOp(this,'AWCC')">AWCC</div>
+<div class="op et" onclick="setOp(this,'Etisalat')">ETISALAT</div>
+<div class="op mt" onclick="setOp(this,'MTN')">MTN</div>
+<div class="op sa" onclick="setOp(this,'Salaam')">SALAAM</div>
+</div>
+<div class="amtgrid">
+<div class="amt" onclick="setAmt(this,'100')">100 AFN <small>€1.13</small></div>
+<div class="amt" onclick="setAmt(this,'200')">200 AFN <small>€2.26</small></div>
+<div class="amt" onclick="setAmt(this,'500')">500 AFN <small>€5.66</small></div>
+<div class="amt" onclick="setAmt(this,'1000')">1000 AFN <small>€11.33</small></div>
+</div>
+<div class="phone"><div class="pref">🇦🇫 +93</div><input id="ph" placeholder="700123456"></div>
+<div class="btn" onclick="goBank()" id="rbtn">RECHARGE NOW</div>
+<div style="text-align:center;color:#555;font-size:11px" id="foot">Secure Payment • Instant Topup • 24/7 Support</div>
+</div>
+
+<!-- BANK -->
+<div id="bank" class="page">
+<div style="padding:18px;font-size:20px;font-weight:800"
