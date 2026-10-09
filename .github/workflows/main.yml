@@ -12,33 +12,26 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - name: Unzip
         run: |
-          unzip -o 'project (1).zip' -d temp_zip
-          cp -r temp_zip/*. 2>/dev/null || true
-          cp -r temp_zip/*/*. 2>/dev/null || true
-          rm -rf temp_zip 'project (1).zip'
+          unzip -o 'project (1).zip' -d temp
+          cp -r temp/..
+          rm -rf temp 'project (1).zip'
           ls -la
-
       - name: Install
         run: npm install
-
-      - name: Build Web
+      - name: Build web
         run: npm run build
-
       - name: Add Android
         run: |
           rm -rf android
           npx cap add android
           npx cap copy android
-
       - name: Build APK
         run: |
           cd android
           chmod +x gradlew
          ./gradlew assembleDebug
-
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
