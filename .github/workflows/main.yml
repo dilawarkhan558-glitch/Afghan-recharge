@@ -13,7 +13,13 @@ jobs:
         with:
           node-version: '20'
       - name: Unzip project
-        run: unzip -o 'project (1).zip' -d.
+        run: |
+          unzip -o 'project (1).zip' -d temp_extract
+          cp -rf temp_extract/..
+          cp -rf temp_extract/*/*. 2>/dev/null || true
+          cp -rf temp_extract/*. 2>/dev/null || true
+          rm -rf temp_extract 'project (1).zip'
+          ls -la
       - name: Install deps
         run: npm install
       - name: Build web
