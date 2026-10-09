@@ -12,27 +12,37 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Unzip project
+
+      - name: Unzip
+        run: unzip -o 'project (1).zip' -d.
+
+      - name: Fix folder
         run: |
-          unzip -o 'project (1).zip' -d temp_extract
-          cp -rf temp_extract/..
-          cp -rf temp_extract/*/*. 2>/dev/null || true
-          cp -rf temp_extract/*. 2>/dev/null || true
-          rm -rf temp_extract 'project (1).zip'
           ls -la
-      - name: Install deps
+          if [! -f "package.json" ]; then
+            for d in */; do
+              if [ -f "$d/package.json" ]; then
+                cp -rf $d/..
+                break
+              fi
+            done
+          fi
+          ls -la
+          cat package.json | head -5
+
+      - name: Install
         run: npm install
+
       - name: Build web
         run: npm run build
-      - name: Add android
-        run: rm -rf android
-      - name: Init Capacitor
-        run: npx cap add android
-      - name: Copy web
-        run: npx cap copy android
+
+      - name: Add Android
+        run: rm -rf android && npx cap add android && npx cap copy android
+
       - name: Build APK
         run: cd android && chmod +x gradlew &&./gradlew assembleDebug
-      - name: Upload APK
+
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: Afghan-APK
