@@ -1,49 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AFGHAN TOPUP</title>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AFGHAN TOPUP PRO</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#080808;color:#fff;font-family:Arial,sans-serif}
-.top{height:6px;display:flex}.top div{flex:1}.b1{background:#000}.b2{background:#D32011}.b3{background:#007A36}
-h1{text-align:center;padding:18px 0 10px;font-size:24px;letter-spacing:1px}
-.live{background:linear-gradient(90deg,#111,#1a1a1a);border:1px solid #222;margin:0 12px;padding:10px;border-radius:10px;text-align:center;color:#22ff88;font-size:12px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px}
-.c{padding:22px;border-radius:16px;text-align:center;font-weight:900;font-size:16px;box-shadow:0 4px 15px rgba(0,0,0,.4)}
-.r{background:linear-gradient(135deg,#ff4d4d,#cc0000)}.bl{background:linear-gradient(135deg,#4d8aff,#0050d0)}
-.g1{background:linear-gradient(135deg,#a8e6a0,#4caf50);color:#000}.y{background:linear-gradient(135deg,#ffe88a,#f5c518);color:#000}
-.g2{background:linear-gradient(135deg,#3d8b5f,#1e5a3a);grid-column:span 2}
-.amounts{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px}
-.am{background:#1c1c1c;border:1px solid #2a2a2a;border-radius:12px;padding:14px;text-align:center}
-.am b{font-size:18px}.am small{color:#6fbf8a;font-weight:700}
-.phone{display:flex;align-items:center;margin:14px;background:#1c1c1c;border:1px solid #2a2a2a;border-radius:14px;overflow:hidden}
-.phone div{background:#252525;padding:14px;font-weight:700;border-right:1px solid #2a2a2a}
-.phone input{flex:1;background:transparent;border:none;color:#fff;padding:14px;font-size:16px;outline:none}
-.btn{margin:14px;background:#fff;color:#000;padding:18px;border-radius:14px;text-align:center;font-weight:900;font-size:16px}
-.foot{text-align:center;color:#555;font-size:11px;line-height:1.6;padding:12px 12px 30px}
-</style>
-</head>
-<body>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0a;color:#fff;font-family:Arial;padding-bottom:70px}
+.top{height:6px;display:flex}.b1{flex:1;background:#000}.b2{flex:1;background:#D32011}.b3{flex:1;background:#007A36}
+.header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#111}
+.header b{font-size:18px}.icons{display:flex;gap:12px}.icons i{cursor:pointer}
+.live{background:#111;border:1px solid #222;margin:10px;padding:9px;border-radius:10px;text-align:center;color:#22ff88;font-size:11px;font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px}.c{padding:20px;border-radius:16px;text-align:center;font-weight:900;cursor:pointer;border:2px solid transparent}
+.c.active{border-color:#fff;transform:scale(.97)}.r{background:#E53935}.bl{background:#3B82F6}.g1{background:#6fbf8a;color:#000}.y{background:#FCD86F;color:#000}.g2{background:#2E6B4A;grid-column:span 2}
+.am{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px}.a{background:#1c1c1c;border:1px solid #2a2a2a;border-radius:12px;padding:14px;text-align:center;cursor:pointer}.a.active{border-color:#22ff88;background:#122a1b}
+.phone{display:flex;margin:12px;background:#1c1c1c;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden}
+.btn{margin:12px;background:#fff;color:#000;padding:16px;border-radius:14px;text-align:center;font-weight:900;font-size:16px;cursor:pointer}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #222;display:flex;justify-content:space-around;padding:8px 0}
+.bottom div{text-align:center;font-size:11px;color:#888;cursor:pointer}.bottom div.active{color:#fff}.bottom i{display:block;font-size:22px}
+#history, #settings{display:none;padding:14px}.card{background:#1c1c1c;border:1px solid #2a2a2a;border-radius:12px;padding:12px;margin:8px 0}
+</style></head><body>
 <div class="top"><div class="b1"></div><div class="b2"></div><div class="b3"></div></div>
-<h1>AFGHAN TOPUP 🇦🇫</h1>
-<div class="live">● LIVE - 1 EUR = 88.20 AFN &nbsp;|&nbsp; afghantopup.support@gmail.com</div>
+
+<div class="header"><b>AFGHAN TOPUP 🇦🇫</b><div class="icons"><i class="material-icons" onclick="changeLang()">language</i><i class="material-icons" onclick="showPage('settings')">settings</i></div></div>
+
+<div id="homePage">
+<div class="live" id="rate">● LIVE - 1 EUR = Loading... AFN</div>
 <div class="grid">
-<div class="c r">ROSHAN</div>
-<div class="c bl">AWCC</div>
-<div class="c g1">ETISALAT</div>
-<div class="c y">MTN</div>
-<div class="c g2">SALAAM</div>
+<div class="c r" onclick="selectOp(this,'Roshan')">ROSHAN</div>
+<div class="c bl" onclick="selectOp(this,'AWCC')">AWCC</div>
+<div class="c g1" onclick="selectOp(this,'Etisalat')">ETISALAT</div>
+<div class="c y" onclick="selectOp(this,'MTN')">MTN</div>
+<div class="c g2" onclick="selectOp(this,'Salaam')">SALAAM</div>
 </div>
-<div class="amounts">
-<div class="am"><b>100 AFN</b><br><small>€1.13</small></div>
-<div class="am"><b>200 AFN</b><br><small>€2.26</small></div>
-<div class="am"><b>500 AFN</b><br><small>€5.66</small></div>
-<div class="am"><b>1000 AFN</b><br><small>€11.33</small></div>
+<div class="am" id="prices"></div>
+<div class="phone"><div style="padding:12px;background:#222">🇦🇫 +93</div><input id="num" style="flex:1;background:transparent;border:0;color:#fff;padding:12px;font-size:16px;outline:none" placeholder="700123456"></div>
+<div class="btn" onclick="payNow()">PAY WITH CARD 💳 → RECHARGE</div>
 </div>
-<div class="phone"><div>🇦🇫 +93</div><input placeholder="700123456"></div>
-<div class="btn" onclick="alert('Bank: Azizi Bank\nEmail: afghantopup.support@gmail.com\nWhatsApp: +93 771921149')">RECHARGE NOW → AZIZI BANK</div>
-<div class="foot">WhatsApp: +93 771921149<br>Email: afghantopup.support@gmail.com<br>© 2026 Afghan Topup - Milan, Italy</div>
-</body>
-</html>
+
+<div id="history"><h3>History</h3><div id="histList"></div></div>
+<div id="settings"><h3>Settings</h3><div class="card">Email: afghantopup.support@gmail.com<br>WhatsApp: +93 771921149<br><br><button onclick="changeLang()">Change Language / زبان</button></div></div>
+
+<div class="bottom">
+<div class="active" onclick="showPage('home')"><i class="material-icons">home</i>Home</div>
+<div onclick="showPage('history')"><i class="material-icons">history</i>History</div>
+<div onclick="showPage('settings')"><i class="material-icons">settings</i>Settings</div>
+</div>
+
+<script>
+let selOp='', selAmt=0, rate=72, lang='en';
+async function loadRate(){
+ try{
+  let r=await fetch('https://api.frankfurter.app/latest?from=EUR&to=AFN'); let d=await r.json(); rate=d.rates.AFN;
+ }catch(e){rate=72}
+ document.getElementById('rate').innerText=`● LIVE - 1 EUR = ${rate.toFixed(2)} AFN | ${rate.toFixed(2)>70?'Market Live':''}`;
+ let amts=[100,200,500,1000]; let h=''; amts.forEach(a=>{let e=(a/rate).toFixed(2); h+=`<div class="a" onclick="selectAmt(this,${a})"><b>${a} AFN</b><br><small style="color:#6fbf8a">€${e}</small></div>`}); document.getElementById('prices').innerHTML=h;
+}
+function selectOp(el,n){document.querySelectorAll('.c').forEach(x=>x.classList.remove('active'));el.classList.add('active');selOp=n}
+function selectAmt(el,a){document.querySelectorAll('.a').forEach(x=>x.classList.remove('active'));el.classList.add('active');selAmt=a}
+function payNow(){
+ let num=document.getElementById('num').value;
+ if(!selOp||!selAmt||num.length<9){alert('Operator, Amount aur Number select karo!');return}
+ // Save to history
+ let hist=JSON.parse(localStorage.getItem('hist')||'[]'); hist.unshift({op:selOp,amt:selAmt,num:num,date:new Date().toLocaleString()}); localStorage.setItem('hist',JSON.stringify(hist));
+ // STRIPE PAYMENT - yahan apna Stripe Payment Link daalo
+ let eur=(selAmt/rate).toFixed(2);
+ // Abhi demo ke liye Stripe test link
+ let stripeLink = `https://buy.stripe.com/test_...?amount=${eur}&number=${num}`;
+ // REAL: apna Stripe Link lagao, jaise: https://buy.stripe.com/...
+ alert(`Europe Payment:\n${selOp} - ${selAmt} AFN (€${eur})\nNumber: +93 ${num}\n\nAb Card Payment Page khulega...`);
+ window.open(`https://buy.stripe.com/test_8wM14o0Wv8Q4gWQaEE`, '_blank');
+ // Baad me Azizi Bank ki jagah ye link hoga: aapka Stripe dashboard -> Payment Links -> Create
+}
+function showPage(p){
+ document.getElementById('homePage').style.display=p=='home'?'block':'none';
+ document.getElementById('history').style.display=p=='history'?'block':'none';
+ document.getElementById('settings').style.display=p=='settings'?'block':'none';
+ document.querySelectorAll('.bottom div').forEach(d=>d.classList.remove('active'));
+ if(p=='home') document.querySelectorAll('.bottom div')[0].classList.add('active');
+ if(p=='history'){ document.querySelectorAll('.bottom div')[1].classList.add('active'); let h=JSON.parse(localStorage.getItem('hist')||'[]'); let html=h.length?'' : 'No history'; h.forEach(i=>{html+=`<div class="card">${i.date}<br><b>${i.op} - ${i.amt} AFN</b><br>+93 ${i.num}</div>`}); document.getElementById('histList').innerHTML=html; }
+ if(p=='settings') document.querySelectorAll('.bottom div')[2].classList.add('active');
+}
+function changeLang(){ alert('Language: English / دری / پښتو / Italiano - Agla update me full translation add kar dunga'); }
+loadRate();
+</script>
+</body></html>
