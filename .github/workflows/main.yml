@@ -5,38 +5,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Unzip Project
+      - name: Unzip
         run: |
-          ls -la
           unzip -o "project (1).zip" -d.
-          rm -f "project (1).zip"
-          rm -f project.zip
-          # Agar files kisi folder ke andar hain to bahar nikalo
+          rm -f *.zip
           if [! -f package.json ]; then
-            for d in */; do
-              if [ -f "$d/package.json" ]; then
-                echo "Found in $d"
-                mv "$d"/*. 2>/dev/null || true
-                mv "$d"/.*. 2>/dev/null || true
-                rmdir "$d" 2>/dev/null || true
-                break
-              fi
-            done
+            INNER=$(find. -maxdepth 3 -name package.json | head -1 | xargs dirname)
+            echo "Found project in $INNER"
+            cp -r $INNER/*. || true
           fi
           ls -la
 
-      - name: Build
+      - name: Build Web
         run: |
           npm install
           npm run build
+
+      - name: Build Android
+        run: |
+          rm -rf android
           npx cap add android
           npx cap copy android
           cd android
