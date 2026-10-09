@@ -13,27 +13,22 @@ jobs:
         with:
           node-version: 20
       - name: Unzip
+        run: unzip -o "project (1).zip" -d.
+      - name: Clean
+        run: rm -f *.zip
+      - name: List
+        run: ls -la
+      - name: Install
+        run: npm install
+      - name: Build Web
+        run: npm run build
+      - name: Add Android
         run: |
-          unzip -o "project (1).zip" -d.
-          rm -f *.zip
-          ls -la
-          if [! -f package.json ]; then
-            for d in */; do
-              if [ -f "$d/package.json" ]; then
-                echo "Found in $d"
-                cp -r $d/*.
-                break
-              fi
-            done
-          fi
-          ls -la
-      - name: Build
-        run: |
-          npm install
-          npm run build
           rm -rf android
           npx cap add android
           npx cap copy android
+      - name: Build APK
+        run: |
           cd android
           chmod +x gradlew
          ./gradlew assembleDebug
