@@ -5,22 +5,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: 'temurin'
+          java-version: '17'
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: |
-          npm i -g @capacitor/cli
+          node-version: '20'
+
+      - name: Build APK
+        run: |
           npm init -y
-          npm i @capacitor/core @capacitor/android
-          mkdir www && cp Index.html www/index.html
+          npm i @capacitor/core @capacitor/cli @capacitor/android
+          rm -rf www android
+          mkdir www
+          if [ -f Index.html ]; then cp Index.html www/index.html; else cp index.html www/index.html; fi
           npx cap init "Afghan Recharge" com.afghantopup.app --web-dir=www
           npx cap add android
-          cd android && chmod +x gradlew &&./gradlew assembleDebug
+          cd android
+          chmod +x gradlew
+         ./gradlew assembleDebug
+
       - uses: actions/upload-artifact@v4
         with:
-          name: Afghan-Recharge-REAL-APK
+          name: Afghan-Recharge-APK-FINAL
           path: android/app/build/outputs/apk/debug/app-debug.apk
