@@ -12,41 +12,33 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - name: Unzip
         run: unzip -o 'project (1).zip' -d.
-
       - name: Fix folder
         run: |
           ls -la
           PKG=$(find. -name "package.json" | head -1)
           echo "Found $PKG"
           DIR=$(dirname "$PKG")
-          echo "DIR is $DIR"
+          echo "DIR $DIR"
           if [ "$DIR"!= "." ]; then
             cp -rf "$DIR"/*.
           fi
           ls -la
-
       - name: Install
         run: npm install
-
       - name: Build web
         run: npm run build
-
       - name: Add Android
         run: npx cap add android
-
       - name: Copy web
         run: npx cap copy android
-
       - name: Build APK
         run: |
           cd android
           chmod +x gradlew
          ./gradlew assembleDebug
-
-      - name: Upload APK
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: Afghan-APK
