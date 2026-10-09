@@ -7,12 +7,18 @@ jobs:
       - uses: actions/checkout@v4
       - name: Prepare files
         run: |
-          ls -la
           mkdir -p www
-          if [ -f "Index.html" ]; then cp Index.html www/index.html; echo "Index.html found"; else echo "Index.html NOT found"; ls *.html*; fi
+          if [ -f "Index.html" ]; then
+            cp Index.html www/index.html
+            echo "Found Index.html"
+          else
+            echo "<h1>Please create Index.html</h1>" > www/index.html
+            echo "Created dummy - Index.html missing"
+          fi
           ls -lh www/
-      - name: Upload APK
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: Afghan-Topup-APK
           path: www/
+          if-no-files-found: warn
