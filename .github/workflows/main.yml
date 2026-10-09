@@ -16,13 +16,13 @@ jobs:
       - name: Unzip
         run: unzip -o 'project (1).zip' -d.
 
-      - name: Fix folder structure
+      - name: Fix folder
         run: |
           ls -la
           PKG=$(find. -name "package.json" | head -1)
           echo "Found $PKG"
           DIR=$(dirname "$PKG")
-          echo "Dir is $DIR"
+          echo "DIR is $DIR"
           if [ "$DIR"!= "." ]; then
             cp -rf "$DIR"/*.
           fi
@@ -35,10 +35,10 @@ jobs:
         run: npm run build
 
       - name: Add Android
-        run: |
-          rm -rf android
-          npx cap add android
-          npx cap copy android
+        run: npx cap add android
+
+      - name: Copy web
+        run: npx cap copy android
 
       - name: Build APK
         run: |
