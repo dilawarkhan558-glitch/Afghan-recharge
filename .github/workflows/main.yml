@@ -17,7 +17,8 @@ jobs:
       - run: mkdir -p www && cp Index.html www/index.html
       - run: npx cap init "Afghan Recharge" com.afghantopup.app --web-dir=www
       - run: npx cap add android
-      - run: cd android && chmod +x gradlew &&./gradlew assembleDebug
+      - run: cd android && chmod +x gradlew
+      - run: cd android &&./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
         with:
           name: Afghan-APK
