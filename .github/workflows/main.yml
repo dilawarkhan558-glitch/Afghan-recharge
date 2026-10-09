@@ -1,4 +1,4 @@
-name: Build REAL APK
+name: Build APK
 on: [push]
 jobs:
   build:
@@ -8,23 +8,17 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: 17
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
       - run: npm init -y
       - run: npm install @capacitor/core @capacitor/cli @capacitor/android
-      - run: |
-          rm -rf www android
-          mkdir www
-          cp Index.html www/index.html
-          npx cap init "Afghan Recharge" com.afghantopup.app --web-dir=www
-          npx cap add android
-      - run: |
-          cd android
-          chmod +x gradlew
-         ./gradlew assembleDebug
+      - run: mkdir -p www && cp Index.html www/index.html
+      - run: npx cap init "Afghan Recharge" com.afghantopup.app --web-dir=www
+      - run: npx cap add android
+      - run: cd android && chmod +x gradlew &&./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
         with:
-          name: Afghan-Recharge-APK
+          name: Afghan-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
