@@ -40,13 +40,11 @@ jobs:
 
       - name: Generate Dark Theme UI & Fresh Android Project
         run: |
-          # Purana conflict paida karne wala Android folder aur config bilkul khatam karein
           rm -rf android
           rm -f capacitor.config.ts capacitor.config.js capacitor.config.json || true
 
           mkdir -p www
           
-          # Exact Dark Theme HTML Inject
           cat << 'EOF' > www/index.html
           <!DOCTYPE html>
           <html lang="en">
@@ -173,16 +171,12 @@ jobs:
                   alert('Please enter a valid mobile number!');
                   return;
                 }
-                let eurPrice = (selectedAmountVal / currentRate).toFixed(2);
-                alert('Topup Request:\nNetwork: ' + selectedNetworkName + '\nNumber: +93 ' + phone + '\nAmount: ' + selectedAmountVal + ' AFN (€' + eurPrice + ')');
                 
-                let targetUrl = 'https://buy.stripe.com/YOUR_ACTUAL_PAYMENT_LINK_ID?client_reference_id=' + phone;
+                // Apna asli Stripe payment link yahan dalein
+                let targetUrl = 'https://buy.stripe.com/YOUR_STRIPE_LINK_HERE?client_reference_id=' + selectedNetworkName + '-' + phone;
                 
-                if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
-                  window.Capacitor.Plugins.Browser.open({ url: targetUrl });
-                } else {
-                  window.open(targetUrl, '_system');
-                }
+                // Yeh ensure karega ke link phone ke browser (Chrome) me khule taaki AccessDenied na aaye
+                window.open(targetUrl, '_system');
               }
 
               updatePrices();
@@ -191,7 +185,6 @@ jobs:
           </html>
           EOF
 
-          # Fresh Capacitor Setup
           npx cap init "Afghan Topup" "com.afghantopup.app" --web-dir www
           npx cap add android
           npx cap sync android
