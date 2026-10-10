@@ -29,27 +29,10 @@ jobs:
           npm install
           npm install @capacitor/android @capacitor/cli @capacitor/core @capacitor/browser || true
 
-      - name: Setup Web & Capacitor Android
+      - name: Sync Capacitor
         run: |
-          npm run build || true
-          
-          mkdir -p www
-          if [ -d "dist" ]; then
-            cp -rf dist/* www/ || true
-          elif [ -d "build" ]; then
-            cp -rf build/* www/ || true
-          elif [ -f "index.html" ]; then
-            cp -f index.html www/index.html || true
-          fi
-
-          # Purani config files hatao taaki conflict na ho
-          rm -f capacitor.config.ts capacitor.config.js capacitor.config.json || true
-          rm -rf android
-
-          npx cap init "Afghan Topup" "com.afghantopup.app" --web-dir www
-          npx cap add android
-          npx cap sync android
-          rm -f android/app/src/main/res/values/ic_launcher_background.xml || true
+          # Zip ke andar ke android folder ko preserve karein aur sirf sync chalayein
+          npx cap sync android || true
 
       - name: Build Android APK
         run: |
