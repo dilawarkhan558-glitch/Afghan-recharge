@@ -15,24 +15,26 @@ jobs:
         with:
           node-version: '22'
           
-      - run: npm install
+      # 1. Zip file extract karo
+      - run: unzip -o 'project (1).zip' -d .
       
-      # 1. Dist aur Capacitor Assets public directory me index.html force copy
-      - run: |
-          mkdir -p dist
-          cp index.html dist/index.html
-          
+      - run: npm install
+      - run: npm run build || true
+      
+      # 2. Capacitor Sync
       - run: npx cap sync android
       
-      # 2. Sync hone ke BAAD assets folder me naya index.html force replace
+      # 3. OVERWRITE: Public Assets me naya HTML force insert karo
       - run: |
           mkdir -p android/app/src/main/assets/public
           cp -f index.html android/app/src/main/assets/public/index.html
+          mkdir -p dist
+          cp -f index.html dist/index.html
           
-      # 3. Duplicate Background error fix
+      # 4. Duplicate Resource Fix
       - run: rm -f android/app/src/main/res/values/ic_launcher_background.xml
       
-      # 4. APK assemble
+      # 5. Build APK
       - name: Build Android Debug APK
         run: |
           cd android
