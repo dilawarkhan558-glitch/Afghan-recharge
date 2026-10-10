@@ -10,16 +10,15 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17'
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '20'
 
-      - name: Create Package.json If Missing
+      - name: Create Package.json
         run: |
-          if [ ! -f "package.json" ]; then
-            cat << 'EOF' > package.json
+          cat << 'EOF' > package.json
           {
             "name": "afghan-topup",
             "version": "1.0.0",
@@ -31,21 +30,19 @@ jobs:
             "dependencies": {}
           }
           EOF
-          fi
 
-      - name: Install Dependencies
+      - name: Install Capacitor & Dependencies
         run: |
-          npm install || true
-          npm install @capacitor/android @capacitor/cli @capacitor/core @capacitor/browser || true
+          npm install
+          npm install @capacitor/android @capacitor/cli @capacitor/core @capacitor/browser
 
-      - name: Generate Clean UI & Setup Capacitor
+      - name: Generate App UI & Android Project
         run: |
           rm -rf android
-          rm -f capacitor.config.ts capacitor.config.js capacitor.config.json || true
+          rm -f capacitor.config.ts capacitor.config.js capacitor.config.json
 
           mkdir -p www
           
-          # Aapka original Dark Theme UI aur Payment Link yahan direct embed kar diya hai
           cat << 'EOF' > www/index.html
           <!DOCTYPE html>
           <html lang="en">
@@ -90,4 +87,9 @@ jobs:
                 <button onclick="selectNet(this, 'Roshan')" class="net-btn roshan">ROSHAN</button>
                 <button onclick="selectNet(this, 'AWCC')" class="net-btn awcc">AWCC</button>
                 <button onclick="selectNet(this, 'Etisalat')" class="net-btn etisalat">ETISALAT</button>
-                <button onclick="selectNet(this, '
+                <button onclick="selectNet(this, 'MTN')" class="net-btn mtn selected">MTN</button>
+                <button onclick="selectNet(this, 'Salaam')" class="net-btn salaam">SALAAM</button>
+              </div>
+              <div class="grid-2">
+                <div onclick="selectAmt(this, 100)" class="amount-card selected">
+                  <div class="amt-title">100 AFN</div>
