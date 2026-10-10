@@ -14,7 +14,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Unzip Project
         run: |
@@ -31,24 +31,20 @@ jobs:
 
       - name: Setup Web & Capacitor Android
         run: |
-          # Agar project me pehle se dist/build/www folder hai toh replace na karein
           npm run build || true
           
           mkdir -p www
           
-          # Zip file ke naye source code ko copy karein
           if [ -d "dist" ]; then
             cp -rf dist/* www/ || true
           elif [ -d "build" ]; then
             cp -rf build/* www/ || true
           fi
 
-          # Agar zip file ke andar direct index.html ho toh use preserve karein
           if [ -f "index.html" ]; then
             cp -f index.html www/index.html || true
           fi
 
-          # Fallback: Agar phir bhi index.html na miley tabhi new HTML generate karein
           if [ ! -f "www/index.html" ]; then
             cat << 'EOF' > www/index.html
           <!DOCTYPE html>
