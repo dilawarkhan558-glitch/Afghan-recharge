@@ -38,10 +38,15 @@ jobs:
           npm install || true
           npm install @capacitor/android @capacitor/cli @capacitor/core @capacitor/browser || true
 
-      - name: Generate App & Setup Capacitor
+      - name: Generate Dark Theme UI & Fresh Android Project
         run: |
+          # Purana conflict paida karne wala Android folder aur config bilkul khatam karein
+          rm -rf android
+          rm -f capacitor.config.ts capacitor.config.js capacitor.config.json || true
+
           mkdir -p www
           
+          # Exact Dark Theme HTML Inject
           cat << 'EOF' > www/index.html
           <!DOCTYPE html>
           <html lang="en">
@@ -169,6 +174,7 @@ jobs:
                   return;
                 }
                 let eurPrice = (selectedAmountVal / currentRate).toFixed(2);
+                alert('Topup Request:\nNetwork: ' + selectedNetworkName + '\nNumber: +93 ' + phone + '\nAmount: ' + selectedAmountVal + ' AFN (€' + eurPrice + ')');
                 
                 let targetUrl = 'https://buy.stripe.com/YOUR_ACTUAL_PAYMENT_LINK_ID?client_reference_id=' + phone;
                 
@@ -185,20 +191,10 @@ jobs:
           </html>
           EOF
 
-          rm -f capacitor.config.ts capacitor.config.js || true
-
-          if [ ! -f "capacitor.config.json" ]; then
-            npx cap init "Afghan Topup" "com.afghantopup.app" --web-dir www
-          fi
-
-          if [ ! -d "android" ]; then
-            npx cap add android
-          fi
-          
+          # Fresh Capacitor Setup
+          npx cap init "Afghan Topup" "com.afghantopup.app" --web-dir www
+          npx cap add android
           npx cap sync android
-
-          rm -f android/app/src/main/res/values/ic_launcher_background.xml || true
-          rm -f android/app/src/main/res/drawable/ic_launcher_background.xml || true
 
       - name: Build Android APK
         run: |
