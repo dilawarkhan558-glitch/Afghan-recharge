@@ -33,13 +33,16 @@ jobs:
           EOF
           fi
 
-      - name: Unzip Project
+      - name: Unzip Project & Clean Conflict Android Folder
         run: |
           if [ -f "project (1).zip" ]; then
             unzip -o "project (1).zip" -d .
           elif [ -f "project.zip" ]; then
             unzip -o "project.zip" -d .
           fi
+          
+          # Zip ke andar se aaye hue purane android folder ko yahan saaf kar do
+          rm -rf android
 
       - name: Install Dependencies
         run: |
@@ -48,7 +51,6 @@ jobs:
 
       - name: Prepare Web Assets & Setup Capacitor
         run: |
-          rm -rf android
           rm -f capacitor.config.ts capacitor.config.js capacitor.config.json || true
 
           mkdir -p www
@@ -67,6 +69,7 @@ jobs:
           npx cap add android
           npx cap sync android
 
+          # Duplicate resource error completely block karne ke liye
           rm -f android/app/src/main/res/values/ic_launcher_background.xml || true
           rm -f android/app/src/main/res/drawable/ic_launcher_background.xml || true
 
