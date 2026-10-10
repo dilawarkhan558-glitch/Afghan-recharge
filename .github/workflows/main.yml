@@ -33,43 +33,39 @@ jobs:
           EOF
           fi
 
-      - name: Unzip Project & Clean Conflict Android Folder
+      - name: Extract Only Web Files from Zip (Ignoring Android Junk)
         run: |
+          mkdir -p temp_unzip www
           if [ -f "project (1).zip" ]; then
-            unzip -o "project (1).zip" -d .
+            unzip -o "project (1).zip" -d temp_unzip || true
           elif [ -f "project.zip" ]; then
-            unzip -o "project.zip" -d .
+            unzip -o "project.zip" -d temp_unzip || true
           fi
           
-          # Zip ke andar se aaye hue purane android folder ko yahan saaf kar do
-          rm -rf android
+          # Zip ke andar se sirf index.html aur web assets dhoond kar www me daalo
+          find temp_unzip -name "index.html" -exec cp -f {} www/index.html \; || true
+          if [ -d "temp_unzip/www" ]; then cp -rf temp_unzip/www/* www/ || true; fi
+          if [ -d "temp_unzip/dist" ]; then cp -rf temp_unzip/dist/* www/ || true; fi
+          if [ -d "temp_unzip/build" ]; then cp -rf temp_unzip/build/* www/ || true; fi
+          
+          # Temporary unzip folder ko khatam karo
+          rm -rf temp_unzip
 
       - name: Install Dependencies
         run: |
           npm install || true
           npm install @capacitor/android @capacitor/cli @capacitor/core @capacitor/browser || true
 
-      - name: Prepare Web Assets & Setup Capacitor
+      - name: Setup Fresh Capacitor Android Project
         run: |
+          rm -rf android
           rm -f capacitor.config.ts capacitor.config.js capacitor.config.json || true
-
-          mkdir -p www
-          
-          if [ -d "dist" ]; then
-            cp -rf dist/* www/ || true
-          elif [ -d "build" ]; then
-            cp -rf build/* www/ || true
-          fi
-
-          if [ ! -f "www/index.html" ] && [ -f "index.html" ]; then
-            cp -f index.html www/index.html || true
-          fi
 
           npx cap init "Afghan Topup" "com.afghantopup.app" --web-dir www
           npx cap add android
           npx cap sync android
 
-          # Duplicate resource error completely block karne ke liye
+          # Kisi bhi resource conflict ko root se khatam karne ke liye
           rm -f android/app/src/main/res/values/ic_launcher_background.xml || true
           rm -f android/app/src/main/res/drawable/ic_launcher_background.xml || true
 
