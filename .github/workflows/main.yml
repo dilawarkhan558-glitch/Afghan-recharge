@@ -1,95 +1,141 @@
-name: Build APK
-on: [push, workflow_dispatch]
+
+name: Afghan Topup Auto Build
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+    steps:
+      - name: Download repository files
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip findutils
+
+      - name: Find and extract ZIP
+        run: |
+          ZIP=$(find . -type f -iname '*.zip' \
+            ! -path './.git/*' | head -n 1)
+
+          if [ -z "$ZIP" ]; then
+            echo "ERROR: Repository mein ZIP file nahi mili."
+            exit 1
+          fi
+
+          echo "ZIP found: $ZIP"
+          mkdir -p extracted
+          unzip -o "$ZIP" -d extracted
+
+      - name: Locate app project
+        run: |
+          PROJECT=$(find extracted -type f \
+            \( -name capacitor.config.json \
+            -o -name capacitor.config.ts \
+            -o -name capacitor.config.js \) \
+            -print -quit | xargs -r dirname)
+
+          if [ -z "$PROJECT" ]; then
+            PROJECT=$(find extracted -type f \
+              -name package.json -print -quit |
+              xargs -r dirname)
+          fi
+
+          if [ -z "$PROJECT" ]; then
+            HTML=$(find extracted -type f \
+              -name index.html -print -quit)
+
+            if [ -z "$HTML" ]; then
+              echo "ERROR: ZIP mein app files nahi mili."
+              exit 1
+            fi
+
+            PROJECT=$(dirname "$HTML")
+          fi
+
+          echo "APP_DIR=$PROJECT" >> "$GITHUB_ENV"
+          echo "Project found: $PROJECT"
+
+      - name: Setup Java and Node
+        uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: temurin
+          java-version: "17"
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
-      - name: Create Package.json
+      - name: Prepare app
         run: |
-          cat << 'EOF' > package.json
+          cd "$APP_DIR"
+
+          if [ ! -f package.json ]; then
+            npm init -y
+          fi
+
+          npm install @capacitor/core @capacitor/cli \
+            @capacitor/android @capacitor/browser
+
+          if [ ! -d www ]; then
+            mkdir -p www
+            if [ -f index.html ]; then
+              cp index.html www/index.html
+            fi
+          fi
+
+          if [ ! -f www/index.html ]; then
+            echo "ERROR: www/index.html nahi mili."
+            exit 1
+          fi
+
+      - name: Configure Capacitor
+        run: |
+          cd "$APP_DIR"
+
+          if [ ! -f capacitor.config.json ] && \
+             [ ! -f capacitor.config.ts ] && \
+             [ ! -f capacitor.config.js ]; then
+            cat > capacitor.config.json <<'EOF'
           {
-            "name": "afghan-topup",
-            "version": "1.0.0",
-            "description": "Afghan Topup App",
-            "main": "index.js",
-            "scripts": {
-              "test": "echo \"Error: no test specified\" && exit 1"
-            },
-            "dependencies": {}
+            "appId": "com.afghantopup.app",
+            "appName": "Afghan Topup",
+            "webDir": "www",
+            "server": {
+              "androidScheme": "https"
+            }
           }
           EOF
+          fi
 
-      - name: Install Capacitor & Dependencies
+      - name: Prepare Android
         run: |
-          npm install
-          npm install @capacitor/android @capacitor/cli @capacitor/core @capacitor/browser
+          cd "$APP_DIR"
 
-      - name: Generate App UI & Android Project
+          if [ ! -d android ]; then
+            npx cap add android
+          fi
+
+          npx cap sync android
+
+      - name: Build APK
         run: |
-          rm -rf android
-          rm -f capacitor.config.ts capacitor.config.js capacitor.config.json
+          cd "$APP_DIR"
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
-          mkdir -p www
-          
-          cat << 'EOF' > www/index.html
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-            <title>Afghan Topup</title>
-            <style>
-              * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-              body { background-color: #000000; color: #ffffff; min-height: 100vh; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; max-width: 480px; margin: 0 auto; }
-              h1 { font-size: 22px; font-weight: 800; text-align: center; letter-spacing: 1px; margin-bottom: 12px; margin-top: 10px; }
-              .live-bar { background-color: #051c0c; border: 1px solid #00e676; border-radius: 999px; padding: 8px 12px; font-size: 11px; color: #00e676; font-weight: 600; text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; }
-              .pulse-dot { width: 8px; height: 8px; background-color: #00e676; border-radius: 50%; display: inline-block; }
-              .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-              .net-btn { padding: 16px 8px; border-radius: 16px; font-weight: 800; font-size: 16px; border: 2px solid transparent; cursor: pointer; text-align: center; width: 100%; outline: none; }
-              .net-btn.roshan { background-color: #ff3b30; color: #ffffff; }
-              .net-btn.awcc { background-color: #3478f6; color: #ffffff; }
-              .net-btn.etisalat { background-color: #70d766; color: #000000; }
-              .net-btn.mtn { background-color: #ffcc00; color: #000000; }
-              .net-btn.salaam { background-color: #1f633e; color: #ffffff; grid-column: span 2; margin-bottom: 12px; }
-              .net-btn.selected { border-color: #ffffff !important; }
-              .amount-card { background-color: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 16px; padding: 14px; text-align: center; cursor: pointer; }
-              .amount-card.selected { border-color: #ffffff; }
-              .amt-title { font-size: 18px; font-weight: 700; }
-              .amt-price { font-size: 12px; color: #00e676; font-weight: 600; margin-top: 4px; }
-              .phone-box { display: flex; background-color: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 16px; overflow: hidden; margin-top: 10px; margin-bottom: 20px; }
-              .flag-code { background-color: #2c2c2e; padding: 12px 16px; font-weight: 600; color: #d1d5db; display: flex; align-items: center; gap: 6px; }
-              .phone-input { width: 100%; background: transparent; border: none; padding: 12px 16px; outline: none; color: #ffffff; font-family: monospace; font-size: 16px; }
-              .action-btn { width: 100%; background-color: #ffffff; color: #000000; font-weight: 800; padding: 16px; border-radius: 16px; border: none; font-size: 16px; cursor: pointer; letter-spacing: 0.5px; }
-              .footer { text-align: center; font-size: 11px; color: #6b7280; margin-top: 24px; padding-bottom: 16px; line-height: 1.6; }
-              .footer strong { color: #9ca3af; }
-            </style>
-          </head>
-          <body>
-            <div>
-              <h1>AFGHAN TOPUP 🇦🇫</h1>
-              <div class="live-bar" onclick="fetchLiveRate()">
-                <span class="pulse-dot"></span>
-                <span id="rateText">LIVE - 1 EUR = 72.50 AFN | Tap to Refresh</span>
-              </div>
-              <div class="grid-2">
-                <button onclick="selectNet(this, 'Roshan')" class="net-btn roshan">ROSHAN</button>
-                <button onclick="selectNet(this, 'AWCC')" class="net-btn awcc">AWCC</button>
-                <button onclick="selectNet(this, 'Etisalat')" class="net-btn etisalat">ETISALAT</button>
-                <button onclick="selectNet(this, 'MTN')" class="net-btn mtn selected">MTN</button>
-                <button onclick="selectNet(this, 'Salaam')" class="net-btn salaam">SALAAM</button>
-              </div>
-              <div class="grid-2">
-                <div onclick="selectAmt(this, 100)" class="amount-card selected">
-                  <div class="amt-title">100 AFN</div>
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Afghan-Topup-APK
+          path: "**/android/app/build/outputs/apk/debug/app-debug.apk"
+          if-no-files-found: error
