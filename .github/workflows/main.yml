@@ -31,17 +31,26 @@ jobs:
 
       - name: Setup Web & Capacitor Android
         run: |
-          # Agar project me pehle se package.json build script hai toh run karein
+          # Agar project me pehle se dist/build/www folder hai toh replace na karein
           npm run build || true
           
-          # Ensure www folder exists and inject HTML
           mkdir -p www
+          
+          # Zip file ke naye source code ko copy karein
           if [ -d "dist" ]; then
             cp -rf dist/* www/ || true
+          elif [ -d "build" ]; then
+            cp -rf build/* www/ || true
           fi
-          
-          # Agar fir bhi www/index.html nahi hai toh apna code inject karein
-          cat << 'EOF' > www/index.html
+
+          # Agar zip file ke andar direct index.html ho toh use preserve karein
+          if [ -f "index.html" ]; then
+            cp -f index.html www/index.html || true
+          fi
+
+          # Fallback: Agar phir bhi index.html na miley tabhi new HTML generate karein
+          if [ ! -f "www/index.html" ]; then
+            cat << 'EOF' > www/index.html
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -184,6 +193,7 @@ jobs:
           </body>
           </html>
           EOF
+          fi
 
           rm -rf android
           npx cap init "Afghan Topup" "com.afghantopup.app" --web-dir www
