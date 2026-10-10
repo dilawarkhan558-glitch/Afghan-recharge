@@ -15,26 +15,24 @@ jobs:
         with:
           node-version: '22'
           
-      # 1. Zip file extract karo
       - run: unzip -o 'project (1).zip' -d .
-      
       - run: npm install
-      - run: npm run build || true
       
-      # 2. Capacitor Sync
-      - run: npx cap sync android
-      
-      # 3. OVERWRITE: Public Assets me naya HTML force insert karo
+      # Single-file HTML ko android Assets main directly overwrite karo
       - run: |
-          mkdir -p android/app/src/main/assets/public
-          cp -f index.html android/app/src/main/assets/public/index.html
           mkdir -p dist
           cp -f index.html dist/index.html
+          mkdir -p android/app/src/main/assets/public
+          cp -f index.html android/app/src/main/assets/public/index.html
           
-      # 4. Duplicate Resource Fix
+      - run: npx cap sync android
+      
+      # Final copy to ensure Capacitor doesn't overwrite it during sync
+      - run: |
+          cp -f index.html android/app/src/main/assets/public/index.html
+          
       - run: rm -f android/app/src/main/res/values/ic_launcher_background.xml
       
-      # 5. Build APK
       - name: Build Android Debug APK
         run: |
           cd android
