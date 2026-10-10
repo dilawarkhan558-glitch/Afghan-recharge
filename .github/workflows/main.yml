@@ -16,16 +16,32 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Create Package.json If Missing
+        run: |
+          if [ ! -f "package.json" ]; then
+            cat << 'EOF' > package.json
+          {
+            "name": "afghan-topup",
+            "version": "1.0.0",
+            "description": "Afghan Topup App",
+            "main": "index.js",
+            "scripts": {
+              "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "dependencies": {}
+          }
+          EOF
+          fi
+
       - name: Install Dependencies
         run: |
-          npm install
+          npm install || true
           npm install @capacitor/android @capacitor/cli @capacitor/core @capacitor/browser || true
 
       - name: Generate App & Setup Capacitor
         run: |
           mkdir -p www
           
-          # Yahi aapka exact pasandeeda dark theme design hai
           cat << 'EOF' > www/index.html
           <!DOCTYPE html>
           <html lang="en">
@@ -153,7 +169,6 @@ jobs:
                   return;
                 }
                 let eurPrice = (selectedAmountVal / currentRate).toFixed(2);
-                alert('Topup Request:\nNetwork: ' + selectedNetworkName + '\nNumber: +93 ' + phone + '\nAmount: ' + selectedAmountVal + ' AFN (€' + eurPrice + ')');
                 
                 let targetUrl = 'https://buy.stripe.com/YOUR_ACTUAL_PAYMENT_LINK_ID?client_reference_id=' + phone;
                 
@@ -182,7 +197,6 @@ jobs:
           
           npx cap sync android
 
-          # Duplicate resource error hatane ke liye
           rm -f android/app/src/main/res/values/ic_launcher_background.xml || true
           rm -f android/app/src/main/res/drawable/ic_launcher_background.xml || true
 
