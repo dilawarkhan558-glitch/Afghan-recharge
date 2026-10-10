@@ -15,15 +15,16 @@ jobs:
         with:
           node-version: '22'
           
-      - run: unzip -o 'project (1).zip' -d .
-      - run: ls -la
-      
       - run: npm install
-      - run: npm run build
       
+      # Single-file HTML ko sync ke liye prepare karna
+      - run: |
+          mkdir -p dist
+          cp index.html dist/index.html
+          
       - run: npx cap sync android
       
-      # Duplicate background icon file ko delete karne ke liye:
+      # Duplicate resource error fix
       - run: rm -f android/app/src/main/res/values/ic_launcher_background.xml
       
       - name: Build Android Debug APK
