@@ -15,18 +15,26 @@ jobs:
         with:
           node-version: '22'
           
-      - run: npm install
+      # 1. Zip file extract karo
+      - run: unzip -o 'project (1).zip' -d .
       
-      # Single-file HTML ko sync ke liye prepare karna
+      # 2. Naya HTML file Capacitor web folder me replace karo
       - run: |
           mkdir -p dist
           cp index.html dist/index.html
+          mkdir -p android/app/src/main/assets/public
+          cp index.html android/app/src/main/assets/public/index.html
           
+      - run: npm install
+      - run: npm run build || true
+      
+      # 3. Capacitor Sync
       - run: npx cap sync android
       
-      # Duplicate resource error fix
+      # 4. Duplicate Resource Fix
       - run: rm -f android/app/src/main/res/values/ic_launcher_background.xml
       
+      # 5. Build APK
       - name: Build Android Debug APK
         run: |
           cd android
