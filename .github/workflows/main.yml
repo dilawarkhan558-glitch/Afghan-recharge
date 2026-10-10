@@ -60,11 +60,10 @@ jobs:
           EOF
           fi
 
-          # Purani conflict wali TypeScript config hata kar clean JSON use karein
           rm -f capacitor.config.ts capacitor.config.js || true
 
           if [ ! -f "capacitor.config.json" ]; then
-            npx cap init "Afghan Topup" "com.afghantopup.app" --web-dir www --yes
+            npx cap init "Afghan Topup" "com.afghantopup.app" --web-dir www
           fi
 
           if [ ! -d "android" ]; then
