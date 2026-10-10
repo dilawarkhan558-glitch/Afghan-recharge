@@ -24,17 +24,23 @@ jobs:
             unzip -o "project.zip" -d .
           fi
 
-      - name: Install & Setup Capacitor
+      - name: Install Dependencies
         run: |
           npm install
           npm install @capacitor/android @capacitor/cli @capacitor/core @capacitor/browser || true
-          rm -rf android
-          npx cap init "Afghan Topup" "com.afghantopup.app" --web-dir www || true
 
-      - name: Inject Clean HTML into WWW
+      - name: Setup Web & Capacitor Android
         run: |
+          # Agar project me pehle se package.json build script hai toh run karein
+          npm run build || true
+          
+          # Ensure www folder exists and inject HTML
           mkdir -p www
-          rm -rf www/*
+          if [ -d "dist" ]; then
+            cp -rf dist/* www/ || true
+          fi
+          
+          # Agar fir bhi www/index.html nahi hai toh apna code inject karein
           cat << 'EOF' > www/index.html
           <!DOCTYPE html>
           <html lang="en">
@@ -62,4 +68,142 @@ jobs:
               .amt-price { font-size: 12px; color: #00e676; font-weight: 600; margin-top: 4px; }
               .phone-box { display: flex; background-color: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 16px; overflow: hidden; margin-top: 10px; margin-bottom: 20px; }
               .flag-code { background-color: #2c2c2e; padding: 12px 16px; font-weight: 600; color: #d1d5db; display: flex; align-items: center; gap: 6px; }
-              .phone-input { width: 100%; background: transparent; border: none; padding: 12px 16px; outline: none; color: #
+              .phone-input { width: 100%; background: transparent; border: none; padding: 12px 16px; outline: none; color: #ffffff; font-family: monospace; font-size: 16px; }
+              .action-btn { width: 100%; background-color: #ffffff; color: #000000; font-weight: 800; padding: 16px; border-radius: 16px; border: none; font-size: 16px; cursor: pointer; letter-spacing: 0.5px; }
+              .footer { text-align: center; font-size: 11px; color: #6b7280; margin-top: 24px; padding-bottom: 16px; line-height: 1.6; }
+              .footer strong { color: #9ca3af; }
+            </style>
+          </head>
+          <body>
+            <div>
+              <h1>AFGHAN TOPUP 🇦🇫</h1>
+              <div class="live-bar" onclick="fetchLiveRate()">
+                <span class="pulse-dot"></span>
+                <span id="rateText">LIVE - 1 EUR = 72.50 AFN | Tap to Refresh</span>
+              </div>
+              <div class="grid-2">
+                <button onclick="selectNet(this, 'Roshan')" class="net-btn roshan">ROSHAN</button>
+                <button onclick="selectNet(this, 'AWCC')" class="net-btn awcc">AWCC</button>
+                <button onclick="selectNet(this, 'Etisalat')" class="net-btn etisalat">ETISALAT</button>
+                <button onclick="selectNet(this, 'MTN')" class="net-btn mtn selected">MTN</button>
+                <button onclick="selectNet(this, 'Salaam')" class="net-btn salaam">SALAAM</button>
+              </div>
+              <div class="grid-2">
+                <div onclick="selectAmt(this, 100)" class="amount-card selected">
+                  <div class="amt-title">100 AFN</div>
+                  <div class="amt-price" id="p100">€1.38</div>
+                </div>
+                <div onclick="selectAmt(this, 200)" class="amount-card">
+                  <div class="amt-title">200 AFN</div>
+                  <div class="amt-price" id="p200">€2.76</div>
+                </div>
+                <div onclick="selectAmt(this, 500)" class="amount-card">
+                  <div class="amt-title">500 AFN</div>
+                  <div class="amt-price" id="p500">€6.90</div>
+                </div>
+                <div onclick="selectAmt(this, 1000)" class="amount-card">
+                  <div class="amt-title">1000 AFN</div>
+                  <div class="amt-price" id="p1000">€13.79</div>
+                </div>
+              </div>
+              <div class="phone-box">
+                <div class="flag-code">🇦🇫 +93</div>
+                <input type="tel" id="phoneNumber" placeholder="700123456" class="phone-input" />
+              </div>
+              <button onclick="proceedRecharge()" class="action-btn">RECHARGE NOW</button>
+            </div>
+            <div class="footer">
+              <p><strong>WhatsApp: +39 351 212 1290</strong></p>
+              <p>Email: afghantopup.support@gmail.com</p>
+              <p style="margin-top: 6px;">© 2026 Afghan Topup - Milan, Italy</p>
+            </div>
+            <script>
+              let currentRate = 72.50;
+              let selectedNetworkName = 'MTN';
+              let selectedAmountVal = 100;
+
+              function selectNet(el, name) {
+                var btns = document.querySelectorAll('.net-btn');
+                for(var i=0; i<btns.length; i++) { btns[i].classList.remove('selected'); }
+                el.classList.add('selected');
+                selectedNetworkName = name;
+              }
+
+              function selectAmt(el, amount) {
+                var cards = document.querySelectorAll('.amount-card');
+                for(var i=0; i<cards.length; i++) { cards[i].classList.remove('selected'); }
+                el.classList.add('selected');
+                selectedAmountVal = amount;
+              }
+
+              function updatePrices() {
+                document.getElementById('p100').innerText = '€' + (100 / currentRate).toFixed(2);
+                document.getElementById('p200').innerText = '€' + (200 / currentRate).toFixed(2);
+                document.getElementById('p500').innerText = '€' + (500 / currentRate).toFixed(2);
+                document.getElementById('p1000').innerText = '€' + (1000 / currentRate).toFixed(2);
+                document.getElementById('rateText').innerText = 'LIVE - 1 EUR = ' + currentRate.toFixed(2) + ' AFN | Tap to Refresh';
+              }
+
+              async function fetchLiveRate() {
+                try {
+                  document.getElementById('rateText').innerText = 'Updating Live Rate...';
+                  let response = await fetch('https://api.exchangerate-api.com/v4/latest/EUR');
+                  let data = await response.json();
+                  if(data && data.rates && data.rates.AFN) {
+                    currentRate = data.rates.AFN;
+                  } else {
+                    currentRate = 72.50;
+                  }
+                  updatePrices();
+                } catch(e) {
+                  currentRate = 72.50;
+                  updatePrices();
+                }
+              }
+
+              function proceedRecharge() {
+                let phone = document.getElementById('phoneNumber').value.trim();
+                if(!phone || phone.length < 9) {
+                  alert('Please enter a valid mobile number!');
+                  return;
+                }
+                let eurPrice = (selectedAmountVal / currentRate).toFixed(2);
+                alert('Topup Request:\nNetwork: ' + selectedNetworkName + '\nNumber: +93 ' + phone + '\nAmount: ' + selectedAmountVal + ' AFN (€' + eurPrice + ')');
+                
+                let targetUrl = 'https://buy.stripe.com/YOUR_ACTUAL_PAYMENT_LINK_ID?client_reference_id=' + phone;
+                
+                if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
+                  window.Capacitor.Plugins.Browser.open({ url: targetUrl });
+                } else {
+                  window.open(targetUrl, '_system');
+                }
+              }
+
+              updatePrices();
+            </script>
+          </body>
+          </html>
+          EOF
+
+          rm -rf android
+          npx cap init "Afghan Topup" "com.afghantopup.app" --web-dir www
+          npx cap add android
+          npx cap sync android
+          rm -f android/app/src/main/res/values/ic_launcher_background.xml || true
+
+      - name: Build Android APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Find and List APK Files
+        run: |
+          find . -name "*.apk"
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Afghan-APK
+          path: |
+            **/*.apk
