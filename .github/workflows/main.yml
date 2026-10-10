@@ -30,6 +30,17 @@ jobs:
           npm install
           npm install @capacitor/browser || true
 
+      - name: Fix Missing Cordova Variables File
+        run: |
+          mkdir -p android/capacitor-cordova-android-plugins
+          if [ ! -f "android/capacitor-cordova-android-plugins/cordova.variables.gradle" ]; then
+            echo "ext {" > android/capacitor-cordova-android-plugins/cordova.variables.gradle
+            echo "  minSdkVersion = 22" >> android/capacitor-cordova-android-plugins/cordova.variables.gradle
+            echo "  compileSdkVersion = 33" >> android/capacitor-cordova-android-plugins/cordova.variables.gradle
+            echo "  targetSdkVersion = 33" >> android/capacitor-cordova-android-plugins/cordova.variables.gradle
+            echo "}" >> android/capacitor-cordova-android-plugins/cordova.variables.gradle
+          fi
+
       - name: Inject HTML into WWW (Capacitor Standard)
         run: |
           mkdir -p www
