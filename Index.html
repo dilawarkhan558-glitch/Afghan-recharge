@@ -4,87 +4,98 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Afghan Topup</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { background-color: #000000; color: #ffffff; font-family: sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background-color: #000000; color: #ffffff; min-height: 100vh; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 22px; font-weight: 800; text-align: center; letter-spacing: 1px; margin-bottom: 12px; }
+    .live-bar { background-color: #051c0c; border: 1px solid #00e676; border-radius: 999px; padding: 8px 12px; font-size: 11px; color: #00e676; font-weight: 600; text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .pulse-dot { width: 8px; height: 8px; background-color: #00e676; border-radius: 50%; display: inline-block; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .net-btn { padding: 16px 8px; border-radius: 16px; font-weight: 800; font-size: 16px; border: 2px solid transparent; cursor: pointer; text-align: center; width: 100%; outline: none; }
+    .net-btn.roshan { background-color: #ff3b30; color: #ffffff; }
+    .net-btn.awcc { background-color: #3478f6; color: #ffffff; }
+    .net-btn.etisalat { background-color: #70d766; color: #000000; }
+    .net-btn.mtn { background-color: #ffcc00; color: #000000; }
+    .net-btn.salaam { background-color: #1f633e; color: #ffffff; grid-column: span 2; margin-bottom: 12px; }
+    .net-btn:active, .net-btn.selected { border-color: #ffffff !important; }
+    .amount-card { background-color: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 16px; padding: 14px; text-align: center; cursor: pointer; }
+    .amount-card.selected { border-color: #ffffff; }
+    .amt-title { font-size: 18px; font-weight: 700; }
+    .amt-price { font-size: 12px; color: #00e676; font-weight: 600; margin-top: 4px; }
+    .phone-box { display: flex; background-color: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 16px; overflow: hidden; margin-top: 10px; margin-bottom: 20px; }
+    .flag-code { background-color: #2c2c2e; padding: 12px 16px; font-weight: 600; color: #d1d5db; display: flex; align-items: center; gap: 6px; }
+    .phone-input { width: 100%; background: transparent; border: none; padding: 12px 16px; outline: none; color: #ffffff; font-family: monospace; font-size: 16px; }
+    .action-btn { width: 100%; background-color: #ffffff; color: #000000; font-weight: 800; padding: 16px; border-radius: 16px; border: none; font-size: 16px; cursor: pointer; letter-spacing: 0.5px; }
+    .footer { text-align: center; font-size: 11px; color: #6b7280; margin-top: 24px; padding-bottom: 16px; line-height: 1.6; }
+    .footer strong { color: #9ca3af; }
   </style>
 </head>
-<body class="min-h-screen p-4 flex flex-col justify-between max-w-md mx-auto">
+<body>
 
   <div>
-    <!-- Title -->
-    <h1 class="text-2xl font-bold text-center tracking-wider mb-3">
-      AFGHAN TOPUP 🇦🇫
-    </h1>
+    <h1>AFGHAN TOPUP 🇦🇫</h1>
 
-    <!-- Live Rate Banner -->
-    <div class="bg-[#051c0c] border border-[#00e676] rounded-full py-1.5 px-3 text-[11px] text-[#00e676] text-center font-semibold mb-6 flex items-center justify-center gap-1.5">
-      <span class="h-2 w-2 rounded-full bg-[#00e676] inline-block animate-pulse"></span>
+    <div class="live-bar">
+      <span class="pulse-dot"></span>
       LIVE - 1 EUR = 88.20 AFN | afghantopup.support@gmail.com
     </div>
 
     <!-- Network Buttons Grid -->
-    <div class="grid grid-cols-2 gap-3 mb-3">
-      <button onclick="selectNetwork(this)" class="network-btn bg-[#ff3b30] text-white py-4 rounded-2xl font-bold text-lg border-2 border-transparent focus:border-white">ROSHAN</button>
-      <button onclick="selectNetwork(this)" class="network-btn bg-[#3478f6] text-white py-4 rounded-2xl font-bold text-lg border-2 border-transparent focus:border-white">AWCC</button>
-      <button onclick="selectNetwork(this)" class="network-btn bg-[#70d766] text-black py-4 rounded-2xl font-bold text-lg border-2 border-transparent focus:border-white">ETISALAT</button>
-      <button onclick="selectNetwork(this)" class="network-btn bg-[#ffcc00] text-black py-4 rounded-2xl font-bold text-lg border-2 border-transparent focus:border-white">MTN</button>
+    <div class="grid-2">
+      <button onclick="selectNet(this)" class="net-btn roshan">ROSHAN</button>
+      <button onclick="selectNet(this)" class="net-btn awcc">AWCC</button>
+      <button onclick="selectNet(this)" class="net-btn etisalat">ETISALAT</button>
+      <button onclick="selectNet(this)" class="net-btn mtn selected">MTN</button>
+      <button onclick="selectNet(this)" class="net-btn salaam">SALAAM</button>
     </div>
 
-    <!-- Salaam Full Width -->
-    <button onclick="selectNetwork(this)" class="network-btn w-full bg-[#1f633e] text-white py-4 rounded-2xl font-bold text-lg border-2 border-transparent focus:border-white mb-6">SALAAM</button>
-
-    <!-- Select Amount (100 AFN Se Start) -->
-    <div class="grid grid-cols-2 gap-3 mb-6">
-      <div onclick="selectAmount(this)" class="amount-card bg-[#1c1c1e] border border-gray-800 rounded-2xl p-4 text-center cursor-pointer active:border-white">
-        <div class="text-xl font-bold">100 AFN</div>
-        <div class="text-xs text-[#00e676] font-semibold mt-1">€1.13</div>
+    <!-- Amounts (100 AFN se start) -->
+    <div class="grid-2">
+      <div onclick="selectAmt(this)" class="amount-card selected">
+        <div class="amt-title">100 AFN</div>
+        <div class="amt-price">€1.13</div>
       </div>
-      <div onclick="selectAmount(this)" class="amount-card bg-[#1c1c1e] border border-gray-800 rounded-2xl p-4 text-center cursor-pointer active:border-white">
-        <div class="text-xl font-bold">200 AFN</div>
-        <div class="text-xs text-[#00e676] font-semibold mt-1">€2.26</div>
+      <div onclick="selectAmt(this)" class="amount-card">
+        <div class="amt-title">200 AFN</div>
+        <div class="amt-price">€2.26</div>
       </div>
-      <div onclick="selectAmount(this)" class="amount-card bg-[#1c1c1e] border border-gray-800 rounded-2xl p-4 text-center cursor-pointer active:border-white">
-        <div class="text-xl font-bold">500 AFN</div>
-        <div class="text-xs text-[#00e676] font-semibold mt-1">€5.66</div>
+      <div onclick="selectAmt(this)" class="amount-card">
+        <div class="amt-title">500 AFN</div>
+        <div class="amt-price">€5.66</div>
       </div>
-      <div onclick="selectAmount(this)" class="amount-card bg-[#1c1c1e] border border-gray-800 rounded-2xl p-4 text-center cursor-pointer active:border-white">
-        <div class="text-xl font-bold">1000 AFN</div>
-        <div class="text-xs text-[#00e676] font-semibold mt-1">€11.33</div>
+      <div onclick="selectAmt(this)" class="amount-card">
+        <div class="amt-title">1000 AFN</div>
+        <div class="amt-price">€11.33</div>
       </div>
     </div>
 
-    <!-- Phone Number Input -->
-    <div class="flex bg-[#1c1c1e] rounded-2xl overflow-hidden border border-gray-800 mb-6">
-      <div class="flex items-center gap-1 bg-[#2c2c2e] px-4 py-3 font-semibold text-gray-300">
-        <span>🇦🇫</span>
-        <span>+93</span>
-      </div>
-      <input type="tel" placeholder="700123456" class="w-full bg-transparent px-4 py-3 outline-none text-white font-mono placeholder-gray-600" />
+    <!-- Phone Number -->
+    <div class="phone-box">
+      <div class="flag-code">🇦🇫 +93</div>
+      <input type="tel" placeholder="700123456" class="phone-input" />
     </div>
 
-    <!-- Action Button -->
-    <button class="w-full bg-white text-black font-extrabold py-4 rounded-2xl text-lg tracking-wide active:bg-gray-200">
-      RECHARGE NOW → AZIZI BANK
-    </button>
+    <!-- Recharge Button -->
+    <button class="action-btn">RECHARGE NOW → AZIZI BANK</button>
   </div>
 
-  <!-- Footer Info (Updated WhatsApp Number) -->
-  <div class="text-center text-xs text-gray-500 mt-8 space-y-1 pb-4">
-    <p class="text-gray-400">WhatsApp: +39 351 212 1290</p>
+  <!-- Footer Info -->
+  <div class="footer">
+    <p><strong>WhatsApp: +39 351 212 1290</strong></p>
     <p>Email: afghantopup.support@gmail.com</p>
-    <p class="mt-2">© 2026 Afghan Topup - Milan, Italy</p>
+    <p style="margin-top: 6px;">© 2026 Afghan Topup - Milan, Italy</p>
   </div>
 
   <script>
-    function selectNetwork(el) {
-      document.querySelectorAll('.network-btn').forEach(b => b.classList.remove('ring-2', 'ring-white'));
-      el.classList.add('ring-2', 'ring-white');
+    function selectNet(el) {
+      document.querySelectorAll('.net-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
     }
-    function selectAmount(el) {
-      document.querySelectorAll('.amount-card').forEach(c => c.classList.remove('border-white'));
-      el.classList.add('border-white');
+    function selectAmt(el) {
+      document.querySelectorAll('.amount-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
     }
   </script>
+
 </body>
 </html>
