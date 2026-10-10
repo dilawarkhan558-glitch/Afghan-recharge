@@ -19,7 +19,7 @@ jobs:
       - run: npm install
       - run: npm run build || true
       
-      # Final Dynamic Exchange Rate (1 EUR = 72.50 AFN) & Clean Payment Gateway Action
+      # Clean Dist Index HTML Inject
       - run: |
           rm -rf dist/*
           cat << 'EOF' > dist/index.html
@@ -58,7 +58,7 @@ jobs:
           <body>
             <div>
               <h1>AFGHAN TOPUP 🇦🇫</h1>
-              <div class="live-bar" onclick="fetchLiveRate()" title="Click to refresh rate">
+              <div class="live-bar" onclick="fetchLiveRate()">
                 <span class="pulse-dot"></span>
                 <span id="rateText">LIVE - 1 EUR = 72.50 AFN | Tap to Refresh</span>
               </div>
@@ -114,4 +114,63 @@ jobs:
                 var cards = document.querySelectorAll('.amount-card');
                 for(var i=0; i<cards.length; i++) { cards[i].classList.remove('selected'); }
                 el.classList.add('selected');
-                selectedAmount
+                selectedAmountVal = amount;
+              }
+
+              function updatePrices() {
+                document.getElementById('p100').innerText = '€' + (100 / currentRate).toFixed(2);
+                document.getElementById('p200').innerText = '€' + (200 / currentRate).toFixed(2);
+                document.getElementById('p500').innerText = '€' + (500 / currentRate).toFixed(2);
+                document.getElementById('p1000').innerText = '€' + (1000 / currentRate).toFixed(2);
+                document.getElementById('rateText').innerText = 'LIVE - 1 EUR = ' + currentRate.toFixed(2) + ' AFN | Tap to Refresh';
+              }
+
+              async function fetchLiveRate() {
+                try {
+                  document.getElementById('rateText').innerText = 'Updating Live Rate...';
+                  let response = await fetch('https://api.exchangerate-api.com/v4/latest/EUR');
+                  let data = await response.json();
+                  if(data && data.rates && data.rates.AFN) {
+                    currentRate = data.rates.AFN;
+                  } else {
+                    currentRate = 72.50;
+                  }
+                  updatePrices();
+                } catch(e) {
+                  currentRate = 72.50;
+                  updatePrices();
+                }
+              }
+
+              function proceedRecharge() {
+                let phone = document.getElementById('phoneNumber').value.trim();
+                if(!phone || phone.length < 9) {
+                  alert('Please enter a valid mobile number!');
+                  return;
+                }
+                let eurPrice = (selectedAmountVal / currentRate).toFixed(2);
+                alert('Topup Request:\nNetwork: ' + selectedNetworkName + '\nNumber: +93 ' + phone + '\nAmount: ' + selectedAmountVal + ' AFN (€' + eurPrice + ')');
+                window.location.href = 'https://buy.stripe.com?amount=' + eurPrice + '&phone=' + phone;
+              }
+
+              updatePrices();
+            </script>
+          </body>
+          </html>
+          EOF
+
+      - run: npx cap sync android
+      - run: rm -f android/app/src/main/res/values/ic_launcher_background.xml
+      
+      # APK Compile Step
+      - name: Build Android Debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+          
+      # Artifacts Upload Step (Fixed Glob Path)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Afghan-APK
+          path: android/app/build/outputs/apk/debug/*.apk
