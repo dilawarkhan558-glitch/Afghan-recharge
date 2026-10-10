@@ -19,7 +19,7 @@ jobs:
       - run: npm install
       - run: npm run build || true
       
-      # SAB SE ZARURI: Build hone ke BAAD dist folder ko pure dark theme HTML se force replace karna
+      # Final Dynamic Exchange Rate (1 EUR = 72.50 AFN) & Clean Payment Gateway Action
       - run: |
           rm -rf dist/*
           cat << 'EOF' > dist/index.html
@@ -33,7 +33,7 @@ jobs:
               * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
               body { background-color: #000000; color: #ffffff; min-height: 100vh; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; max-width: 480px; margin: 0 auto; }
               h1 { font-size: 22px; font-weight: 800; text-align: center; letter-spacing: 1px; margin-bottom: 12px; margin-top: 10px; }
-              .live-bar { background-color: #051c0c; border: 1px solid #00e676; border-radius: 999px; padding: 8px 12px; font-size: 11px; color: #00e676; font-weight: 600; text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+              .live-bar { background-color: #051c0c; border: 1px solid #00e676; border-radius: 999px; padding: 8px 12px; font-size: 11px; color: #00e676; font-weight: 600; text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; }
               .pulse-dot { width: 8px; height: 8px; background-color: #00e676; border-radius: 50%; display: inline-block; }
               .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
               .net-btn { padding: 16px 8px; border-radius: 16px; font-weight: 800; font-size: 16px; border: 2px solid transparent; cursor: pointer; text-align: center; width: 100%; outline: none; }
@@ -58,40 +58,40 @@ jobs:
           <body>
             <div>
               <h1>AFGHAN TOPUP 🇦🇫</h1>
-              <div class="live-bar">
+              <div class="live-bar" onclick="fetchLiveRate()" title="Click to refresh rate">
                 <span class="pulse-dot"></span>
-                LIVE - 1 EUR = 88.20 AFN | afghantopup.support@gmail.com
+                <span id="rateText">LIVE - 1 EUR = 72.50 AFN | Tap to Refresh</span>
               </div>
               <div class="grid-2">
-                <button onclick="selectNet(this)" class="net-btn roshan">ROSHAN</button>
-                <button onclick="selectNet(this)" class="net-btn awcc">AWCC</button>
-                <button onclick="selectNet(this)" class="net-btn etisalat">ETISALAT</button>
-                <button onclick="selectNet(this)" class="net-btn mtn selected">MTN</button>
-                <button onclick="selectNet(this)" class="net-btn salaam">SALAAM</button>
+                <button onclick="selectNet(this, 'Roshan')" class="net-btn roshan">ROSHAN</button>
+                <button onclick="selectNet(this, 'AWCC')" class="net-btn awcc">AWCC</button>
+                <button onclick="selectNet(this, 'Etisalat')" class="net-btn etisalat">ETISALAT</button>
+                <button onclick="selectNet(this, 'MTN')" class="net-btn mtn selected">MTN</button>
+                <button onclick="selectNet(this, 'Salaam')" class="net-btn salaam">SALAAM</button>
               </div>
               <div class="grid-2">
-                <div onclick="selectAmt(this)" class="amount-card selected">
+                <div onclick="selectAmt(this, 100)" class="amount-card selected">
                   <div class="amt-title">100 AFN</div>
-                  <div class="amt-price">€1.13</div>
+                  <div class="amt-price" id="p100">€1.38</div>
                 </div>
-                <div onclick="selectAmt(this)" class="amount-card">
+                <div onclick="selectAmt(this, 200)" class="amount-card">
                   <div class="amt-title">200 AFN</div>
-                  <div class="amt-price">€2.26</div>
+                  <div class="amt-price" id="p200">€2.76</div>
                 </div>
-                <div onclick="selectAmt(this)" class="amount-card">
+                <div onclick="selectAmt(this, 500)" class="amount-card">
                   <div class="amt-title">500 AFN</div>
-                  <div class="amt-price">€5.66</div>
+                  <div class="amt-price" id="p500">€6.90</div>
                 </div>
-                <div onclick="selectAmt(this)" class="amount-card">
+                <div onclick="selectAmt(this, 1000)" class="amount-card">
                   <div class="amt-title">1000 AFN</div>
-                  <div class="amt-price">€11.33</div>
+                  <div class="amt-price" id="p1000">€13.79</div>
                 </div>
               </div>
               <div class="phone-box">
                 <div class="flag-code">🇦🇫 +93</div>
-                <input type="tel" placeholder="700123456" class="phone-input" />
+                <input type="tel" id="phoneNumber" placeholder="700123456" class="phone-input" />
               </div>
-              <button class="action-btn">RECHARGE NOW → AZIZI BANK</button>
+              <button onclick="proceedRecharge()" class="action-btn">RECHARGE NOW</button>
             </div>
             <div class="footer">
               <p><strong>WhatsApp: +39 351 212 1290</strong></p>
@@ -99,31 +99,19 @@ jobs:
               <p style="margin-top: 6px;">© 2026 Afghan Topup - Milan, Italy</p>
             </div>
             <script>
-              function selectNet(el) {
+              let currentRate = 72.50;
+              let selectedNetworkName = 'MTN';
+              let selectedAmountVal = 100;
+
+              function selectNet(el, name) {
                 var btns = document.querySelectorAll('.net-btn');
                 for(var i=0; i<btns.length; i++) { btns[i].classList.remove('selected'); }
                 el.classList.add('selected');
+                selectedNetworkName = name;
               }
-              function selectAmt(el) {
+
+              function selectAmt(el, amount) {
                 var cards = document.querySelectorAll('.amount-card');
                 for(var i=0; i<cards.length; i++) { cards[i].classList.remove('selected'); }
                 el.classList.add('selected');
-              }
-            </script>
-          </body>
-          </html>
-          EOF
-
-      - run: npx cap sync android
-      - run: rm -f android/app/src/main/res/values/ic_launcher_background.xml
-      
-      - name: Build Android Debug APK
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
-          
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Afghan-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+                selectedAmount
