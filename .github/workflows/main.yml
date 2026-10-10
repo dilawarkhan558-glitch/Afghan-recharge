@@ -15,80 +15,108 @@ jobs:
         with:
           node-version: '22'
           
-      # 1. Zip extract karo
       - run: unzip -o 'project (1).zip' -d .
+      - run: npm install
+      - run: npm run build || true
       
-      # 2. ZIP ke andar wale React App.jsx ko naye Dark Theme UI se replace karo
+      # SAB SE ZARURI: Build hone ke BAAD dist folder ko pure dark theme HTML se force replace karna
       - run: |
-          cat << 'EOF' > src/App.jsx
-          import React, { useState } from 'react';
-
-          export default function App() {
-            const [selectedNetwork, setSelectedNetwork] = useState('MTN');
-            const [selectedAmount, setSelectedAmount] = useState(100);
-
-            const packages = [
-              { afn: 100, eur: '1.13' },
-              { afn: 200, eur: '2.26' },
-              { afn: 500, eur: '5.66' },
-              { afn: 1000, eur: '11.33' }
-            ];
-
-            return (
-              <div style={{ backgroundColor: '#000', color: '#fff', minHeight: '100vh', padding: '16px', fontFamily: 'sans-serif', maxWidth: '480px', margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div>
-                  <h1 style={{ fontSize: '22px', fontWeight: 'bold', textAlign: 'center', marginBottom: '12px' }}>AFGHAN TOPUP 🇦🇫</h1>
-
-                  <div style={{ backgroundColor: '#051c0c', border: '1px solid #00e676', borderRadius: '999px', padding: '8px 12px', fontSize: '11px', color: '#00e676', textAlign: 'center', marginBottom: '20px' }}>
-                    LIVE - 1 EUR = 88.20 AFN | afghantopup.support@gmail.com
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
-                    <button onClick={() => setSelectedNetwork('ROSHAN')} style={{ padding: '16px', borderRadius: '16px', fontWeight: 'bold', border: selectedNetwork === 'ROSHAN' ? '2px solid white' : 'none', backgroundColor: '#ff3b30', color: '#fff' }}>ROSHAN</button>
-                    <button onClick={() => setSelectedNetwork('AWCC')} style={{ padding: '16px', borderRadius: '16px', fontWeight: 'bold', border: selectedNetwork === 'AWCC' ? '2px solid white' : 'none', backgroundColor: '#3478f6', color: '#fff' }}>AWCC</button>
-                    <button onClick={() => setSelectedNetwork('ETISALAT')} style={{ padding: '16px', borderRadius: '16px', fontWeight: 'bold', border: selectedNetwork === 'ETISALAT' ? '2px solid white' : 'none', backgroundColor: '#70d766', color: '#000' }}>ETISALAT</button>
-                    <button onClick={() => setSelectedNetwork('MTN')} style={{ padding: '16px', borderRadius: '16px', fontWeight: 'bold', border: selectedNetwork === 'MTN' ? '2px solid white' : 'none', backgroundColor: '#ffcc00', color: '#000' }}>MTN</button>
-                    <button onClick={() => setSelectedNetwork('SALAAM')} style={{ padding: '16px', borderRadius: '16px', fontWeight: 'bold', border: selectedNetwork === 'SALAAM' ? '2px solid white' : 'none', backgroundColor: '#1f633e', color: '#fff', gridColumn: 'span 2' }}>SALAAM</button>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
-                    {packages.map((item) => (
-                      <div key={item.afn} onClick={() => setSelectedAmount(item.afn)} style={{ backgroundColor: '#1c1c1e', border: selectedAmount === item.afn ? '1px solid white' : '1px solid #2c2c2e', borderRadius: '16px', padding: '14px', textAlign: 'center' }}>
-                        <div style={{ fontSize: '18px', fontWeight: 'bold' }}>{item.afn} AFN</div>
-                        <div style={{ fontSize: '12px', color: '#00e676', marginTop: '4px' }}>€{item.eur}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div style={{ display: 'flex', backgroundColor: '#1c1c1e', border: '1px solid #2c2c2e', borderRadius: '16px', overflow: 'hidden', marginBottom: '20px' }}>
-                    <div style={{ backgroundColor: '#2c2c2e', padding: '12px 16px', color: '#d1d5db' }}>🇦🇫 +93</div>
-                    <input type="tel" placeholder="700123456" style={{ width: '100%', background: 'transparent', border: 'none', padding: '12px', outline: 'none', color: '#fff' }} />
-                  </div>
-
-                  <button style={{ width: '100%', backgroundColor: '#fff', color: '#000', fontWeight: 'bold', padding: '16px', borderRadius: '16px', border: 'none', fontSize: '16px' }}>RECHARGE NOW → AZIZI BANK</button>
+          rm -rf dist/*
+          cat << 'EOF' > dist/index.html
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+            <title>Afghan Topup</title>
+            <style>
+              * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+              body { background-color: #000000; color: #ffffff; min-height: 100vh; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; max-width: 480px; margin: 0 auto; }
+              h1 { font-size: 22px; font-weight: 800; text-align: center; letter-spacing: 1px; margin-bottom: 12px; margin-top: 10px; }
+              .live-bar { background-color: #051c0c; border: 1px solid #00e676; border-radius: 999px; padding: 8px 12px; font-size: 11px; color: #00e676; font-weight: 600; text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+              .pulse-dot { width: 8px; height: 8px; background-color: #00e676; border-radius: 50%; display: inline-block; }
+              .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+              .net-btn { padding: 16px 8px; border-radius: 16px; font-weight: 800; font-size: 16px; border: 2px solid transparent; cursor: pointer; text-align: center; width: 100%; outline: none; }
+              .net-btn.roshan { background-color: #ff3b30; color: #ffffff; }
+              .net-btn.awcc { background-color: #3478f6; color: #ffffff; }
+              .net-btn.etisalat { background-color: #70d766; color: #000000; }
+              .net-btn.mtn { background-color: #ffcc00; color: #000000; }
+              .net-btn.salaam { background-color: #1f633e; color: #ffffff; grid-column: span 2; margin-bottom: 12px; }
+              .net-btn.selected { border-color: #ffffff !important; }
+              .amount-card { background-color: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 16px; padding: 14px; text-align: center; cursor: pointer; }
+              .amount-card.selected { border-color: #ffffff; }
+              .amt-title { font-size: 18px; font-weight: 700; }
+              .amt-price { font-size: 12px; color: #00e676; font-weight: 600; margin-top: 4px; }
+              .phone-box { display: flex; background-color: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 16px; overflow: hidden; margin-top: 10px; margin-bottom: 20px; }
+              .flag-code { background-color: #2c2c2e; padding: 12px 16px; font-weight: 600; color: #d1d5db; display: flex; align-items: center; gap: 6px; }
+              .phone-input { width: 100%; background: transparent; border: none; padding: 12px 16px; outline: none; color: #ffffff; font-family: monospace; font-size: 16px; }
+              .action-btn { width: 100%; background-color: #ffffff; color: #000000; font-weight: 800; padding: 16px; border-radius: 16px; border: none; font-size: 16px; cursor: pointer; letter-spacing: 0.5px; }
+              .footer { text-align: center; font-size: 11px; color: #6b7280; margin-top: 24px; padding-bottom: 16px; line-height: 1.6; }
+              .footer strong { color: #9ca3af; }
+            </style>
+          </head>
+          <body>
+            <div>
+              <h1>AFGHAN TOPUP 🇦🇫</h1>
+              <div class="live-bar">
+                <span class="pulse-dot"></span>
+                LIVE - 1 EUR = 88.20 AFN | afghantopup.support@gmail.com
+              </div>
+              <div class="grid-2">
+                <button onclick="selectNet(this)" class="net-btn roshan">ROSHAN</button>
+                <button onclick="selectNet(this)" class="net-btn awcc">AWCC</button>
+                <button onclick="selectNet(this)" class="net-btn etisalat">ETISALAT</button>
+                <button onclick="selectNet(this)" class="net-btn mtn selected">MTN</button>
+                <button onclick="selectNet(this)" class="net-btn salaam">SALAAM</button>
+              </div>
+              <div class="grid-2">
+                <div onclick="selectAmt(this)" class="amount-card selected">
+                  <div class="amt-title">100 AFN</div>
+                  <div class="amt-price">€1.13</div>
                 </div>
-
-                <div style={{ textAlign: 'center', fontSize: '11px', color: '#6b7280', marginTop: '24px' }}>
-                  <p style={{ color: '#9ca3af' }}>WhatsApp: +39 351 212 1290</p>
-                  <p>Email: afghantopup.support@gmail.com</p>
-                  <p style={{ marginTop: '4px' }}>© 2026 Afghan Topup - Milan, Italy</p>
+                <div onclick="selectAmt(this)" class="amount-card">
+                  <div class="amt-title">200 AFN</div>
+                  <div class="amt-price">€2.26</div>
+                </div>
+                <div onclick="selectAmt(this)" class="amount-card">
+                  <div class="amt-title">500 AFN</div>
+                  <div class="amt-price">€5.66</div>
+                </div>
+                <div onclick="selectAmt(this)" class="amount-card">
+                  <div class="amt-title">1000 AFN</div>
+                  <div class="amt-price">€11.33</div>
                 </div>
               </div>
-            );
-          }
+              <div class="phone-box">
+                <div class="flag-code">🇦🇫 +93</div>
+                <input type="tel" placeholder="700123456" class="phone-input" />
+              </div>
+              <button class="action-btn">RECHARGE NOW → AZIZI BANK</button>
+            </div>
+            <div class="footer">
+              <p><strong>WhatsApp: +39 351 212 1290</strong></p>
+              <p>Email: afghantopup.support@gmail.com</p>
+              <p style="margin-top: 6px;">© 2026 Afghan Topup - Milan, Italy</p>
+            </div>
+            <script>
+              function selectNet(el) {
+                var btns = document.querySelectorAll('.net-btn');
+                for(var i=0; i<btns.length; i++) { btns[i].classList.remove('selected'); }
+                el.classList.add('selected');
+              }
+              function selectAmt(el) {
+                var cards = document.querySelectorAll('.amount-card');
+                for(var i=0; i<cards.length; i++) { cards[i].classList.remove('selected'); }
+                el.classList.add('selected');
+              }
+            </script>
+          </body>
+          </html>
           EOF
 
-      # 3. Dependencies Install karo aur React Build banao
-      - run: npm install
-      - run: npm run build
-      
-      # 4. Capacitor Sync karo
       - run: npx cap sync android
-      
-      # 5. Duplicate Resource Fix
       - run: rm -f android/app/src/main/res/values/ic_launcher_background.xml
       
-      # 6. Build APK
       - name: Build Android Debug APK
         run: |
           cd android
