@@ -23,6 +23,9 @@ jobs:
       
       - run: npx cap sync android
       
+      # Duplicate background icon file ko delete karne ke liye:
+      - run: rm -f android/app/src/main/res/values/ic_launcher_background.xml
+      
       - name: Build Android Debug APK
         run: |
           cd android
